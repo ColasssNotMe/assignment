@@ -3,6 +3,22 @@ import json
 # define variables
 user_data_list = []
 
+# retrive data from text file
+with open("users.txt", "r+") as f:
+    content = f.read()
+    # check whether there's content in the file
+    # if there's content:
+    if content:
+        user_data_list = json.loads(content)
+        # clear the file after load the data
+        with open("users.txt", "w") as f:
+            pass
+        f.close()
+    # if there's no content:
+    else:
+        user_data_list = []
+        print(user_data_list)
+        f.close()
 
 # First screen
 print("===================================")
@@ -35,12 +51,15 @@ elif choice == "2":
     while True:
         try:
             id_number = int(id_number)
+            break
         except ValueError:
             print("ID number must only contain number!")
             id_number = input("Enter your ID number: ")
 
     # append the data to user_data_list
-    user_data_list[id_number]
+    user_data_list.append(
+        {"id": id_number, "username": new_username, "password": new_password}
+    )
 
     # open users.txt if it exists, otherwise create it
     # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
@@ -57,8 +76,3 @@ elif choice == "2":
         "You have successfully registered\nPlease wait for admin to approve\n\n\n\n\n\n"
     )
     print("===================================")
-
-    # testin opening file
-    with open("users.txt", "r") as f:
-        temp = json.loads(f)
-        print(temp)
