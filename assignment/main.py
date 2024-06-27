@@ -17,7 +17,6 @@ with open("users.txt", "r+") as f:
     # if there's no content:
     else:
         user_data_list = []
-        print(user_data_list)
         f.close()
 
 # First screen
@@ -27,8 +26,8 @@ print("===================================")
 print("1. Login")
 print("2. Register")
 print("3. Exit")
-choice = input("Enter your choice: ")
-while choice not in ["1", "2", "3"]:
+choice = int(input("Enter your choice: "))
+while choice not in [1, 2, 3]:
     print("Invalid choice!")
     choice = input("Enter your choice: ")
 
@@ -72,7 +71,6 @@ elif choice == "2":
             f,
             indent=4,
         )
-    print(
-        "You have successfully registered\nPlease wait for admin to approve\n\n\n\n\n\n"
-    )
+    print("===================================")
+    print("You have successfully registered\nPlease wait for admin to approve")
     print("===================================")

@@ -1,0 +1,24 @@
+START
+    DEFINE user_data_list as array
+    CREATE a new file named "user_data.txt" if not exists
+    OPEN "user_data.txt" in read mode
+    READ the content of the file and store it in user_data_list
+    IF user_data_list is empty 
+        user_data_list = []
+        CLOSE the file
+    ELSE
+        LOAD the user_data_list from the file
+        CLOSE the file
+    ENDIF
+    print "==================================="
+    print "             Main Menu            "
+    print "==================================="
+    print "1. Login"
+    print "2. Register"
+    print "3. Exit"
+    DEFINE choice as integer
+    PRINT "Enter your choice:"
+    GET choice from user
+    IF choice !=1 or choice !=2 or choice !=3
+        print "Invalid choice."
+        GET 
