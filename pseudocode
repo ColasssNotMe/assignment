@@ -10,15 +10,45 @@ START
         LOAD the user_data_list from the file
         CLOSE the file
     ENDIF
-    print "==================================="
-    print "             Main Menu            "
-    print "==================================="
-    print "1. Login"
-    print "2. Register"
-    print "3. Exit"
+    PRINT "==================================="
+    PRINT "             Main Menu            "
+    PRINT "==================================="
+    PRINT "1. Login"
+    PRINT "2. Register"
+    PRINT "3. Exit"
     DEFINE choice as integer
     PRINT "Enter your choice:"
     GET choice from user
     IF choice !=1 or choice !=2 or choice !=3
-        print "Invalid choice."
-        GET 
+        PRINT "Invalid choice."
+        GET choice from user
+    ENDIF
+    IF choice == 1
+        DEFINE username,password as string
+        username = GET username from user
+    ELSE IF choice == 2
+        DEFINE new_username, new_password,reenter_password as string,id_number as integer
+        GET new_username,new_password,reenter_password from user
+        IF new_password != reenter_password
+            PRINT "Password does not match."
+            PRINT "Enter your password"
+            GET new_password,reenter_password from user
+        PRINT "Enter your IC/passport number:"
+        GET id_number from user  
+            WHILE true
+        TRY 
+            id_number is equal to integer
+            BREAK
+        EXCEPT ValueError
+            PRINT "ID number must only contain number!"
+            GET id_number from user
+        APPEND new_username,new_password,id_number,status=pending to user_data_list
+        OPEN "user_data.txt" in write mode
+        WRITE user_data_list to the file
+        CLOSE the file
+        PRINT "==================================="
+        PRINT "You have successfully registered"
+        PRINT "Please wait for admin to approve"
+        PRINT "==================================="
+    ELSE IF choice == 3
+        EXIT the program

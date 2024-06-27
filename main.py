@@ -32,21 +32,19 @@ while choice not in [1, 2, 3]:
     choice = input("Enter your choice: ")
 
 # Login screen
-if choice == "1":
+if choice == 1:
     username = input("Enter your username: ")
     password = input("Enter your password: ")
-elif choice == "2":
+elif choice == 2:
     new_username = input("Enter your username: ")
     new_password = input("Enter your password: ")
     reenter_password = input("Re-enter your password: ")
     # check if the password are same or not
     while new_password != reenter_password:
-        print("Passwords do not match!")
+        print("Passwords does not match!")
         new_password = input("Enter your password: ")
         reenter_password = input("Re-enter your password: ")
-    id_number = input("Enter your ID number: ")
-
-    # check if id is digit or not using try-catch statement
+    id_number = input("Enter your IC/passport number: ")
     while True:
         try:
             id_number = int(id_number)
@@ -54,12 +52,15 @@ elif choice == "2":
         except ValueError:
             print("ID number must only contain number!")
             id_number = input("Enter your ID number: ")
-
     # append the data to user_data_list
     user_data_list.append(
-        {"id": id_number, "username": new_username, "password": new_password}
+        {
+            "id": id_number,
+            "username": new_username,
+            "password": new_password,
+            "status": "pending",
+        }
     )
-
     # open users.txt if it exists, otherwise create it
     # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
     # using json: https://pynative.com/python-save-dictionary-to-file/
@@ -71,6 +72,13 @@ elif choice == "2":
             f,
             indent=4,
         )
+        f.close()
     print("===================================")
     print("You have successfully registered\nPlease wait for admin to approve")
     print("===================================")
+
+
+elif choice == 3:
+    exit()
+
+# check if id is digit or not using try-catch statement
