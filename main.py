@@ -11,37 +11,25 @@
 from customermanagement import login
 
 
-def __init__(user_data_list):
-    user_data_list.append([101, 101, 101, "approved", "superuser"])
-    # open users.txt if it exists, otherwise create it
-    # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
-    # using json: https://pynative.com/python-save-dictionary-to-file/
-    with open("users.txt", "a") as f:
-        # dump data into text file
-        # ref:https://www.geeksforgeeks.org/what-does-s-mean-in-a-python-format-string/
-        f.write("%s\n" % user_data_list)
-        f.close()
-
-
-# retrive data from text file
-
-
 def main():
+    superuser = [101, "101", "101", "approved", "superuser"]
     user_data_list = []
-    __init__(user_data_list=user_data_list)
-    with open("users.txt", "r+") as f:
-        content = f.read()
-        # check whether there's content in the file
-        # if there's content:
-        if content:
-            # user_data_list = f.read()
-            # clear the file after load the data
-            with open("users.txt", "w") as f:
-                pass
-            f.close()
-        # if there's no content:
+
+    # read the file if it exists, otherwise create it
+    with open("users.txt", "r") as f:
+        # add superuser to the file if it is empty
+        if f.read() == "":
+            f.write(str(superuser))
         else:
-            f.close()
+            f.seek(0)
+            user_data_list = eval(f.read())
+
+    # clear the file after load the data
+    with open("users.txt", "w") as f:
+        f.seek(0)
+        f.truncate()
+    # retrive data from text file
+    # read file
 
     # First screen
     print("===================================")
@@ -65,11 +53,13 @@ def main():
         exit()
 
     # debugging purpose
-    with open("users.txt", "r") as f:
-        user_data_list = eval(f.read())
-        for array in user_data_list:
-            print(array)
-        f.close()
+    # with open("users.txt", "r") as f:
+    #     user_data_list = eval(f.read())
+    #     for user in user_data_list:
+    #         for data in user:
+    #             if data == "superuser":
+    #                 print(user)
+    #     f.close()
 
 
 def saving_register_data(user_data_list, user_type: str):
@@ -106,18 +96,16 @@ def saving_register_data(user_data_list, user_type: str):
         print("===================================")
     elif user_type == "admin":
         user_data_list.append(
-            {
-                "id": id_number,
-                "username": new_username,
-                "password": new_password,
-                "status": "pending",
-                "type": "admin",
-            }
+            [
+                id_number,
+                new_username,
+                new_password,
+                "pending",
+                "admin",
+            ]
         )
         print("===================================")
-        print(
-            "You have successfully registered\nPlease wait for Super customer to approve"
-        )
+        print("You have successfully registered\nPlease wait for Super User to approve")
         print("===================================")
     # open users.txt if it exists, otherwise create it
     # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
