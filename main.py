@@ -12,24 +12,20 @@ from customermanagement import login
 
 
 def main():
-    superuser = [101, "101", "101", "approved", "superuser"]
-    user_data_list = []
-
     # read the file if it exists, otherwise create it
-    with open("users.txt", "r") as f:
+    with open("users.txt", "a+") as f:
+        f.seek(0)
         # add superuser to the file if it is empty
-        if f.read() == "":
-            f.write(str(superuser))
-        else:
+        if f.read(1):
             f.seek(0)
             user_data_list = eval(f.read())
+            print(user_data_list)
 
-    # clear the file after load the data
-    with open("users.txt", "w") as f:
-        f.seek(0)
-        f.truncate()
-    # retrive data from text file
-    # read file
+        else:
+            user_data_list = [[101, "101", "101", "approved", "superuser"]]
+            f.seek(0)
+            f.write("%s\n" % user_data_list)
+        f.close()
 
     # First screen
     print("===================================")
@@ -109,7 +105,12 @@ def saving_register_data(user_data_list, user_type: str):
         print("===================================")
     # open users.txt if it exists, otherwise create it
     # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
-    # using json: https://pynative.com/python-save-dictionary-to-file/
+
+    # clear the file
+    with open("users.txt", "w") as f:
+        pass
+        f.close()
+    # add data to the file
     with open("users.txt", "a") as f:
         # dump data into text file
         # ref: https://www.geeksforgeeks.org/what-does-s-mean-in-a-python-format-string/
