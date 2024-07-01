@@ -1,33 +1,25 @@
 # TODO: DO NOT COMMIT FILE YET, DO PSEUDOCODE
+# notepad data sequence:
+# id
+# username
+# password
+# status
+# type
 
 
-# Super User username: 101,password: 101
-
-import json
+# Super customer username: 101,password: 101
 from customermanagement import login
 
 
 def __init__(user_data_list):
-    user_data_list.append(
-        {
-            "id": 101,
-            "username": "101",
-            "password": "101",
-            "status": "approved",
-            "type": "superuser",
-        }
-    )
+    user_data_list.append([101, 101, 101, "approved", "superuser"])
     # open users.txt if it exists, otherwise create it
     # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
     # using json: https://pynative.com/python-save-dictionary-to-file/
     with open("users.txt", "a") as f:
         # dump data into text file
-        # ref: https://docs.python.org/3/library/json.html
-        json.dump(
-            user_data_list,
-            f,
-            indent=4,
-        )
+        # ref:https://www.geeksforgeeks.org/what-does-s-mean-in-a-python-format-string/
+        f.write("%s\n" % user_data_list)
         f.close()
 
 
@@ -42,7 +34,7 @@ def main():
         # check whether there's content in the file
         # if there's content:
         if content:
-            user_data_list = json.loads(content)
+            # user_data_list = f.read()
             # clear the file after load the data
             with open("users.txt", "w") as f:
                 pass
@@ -72,6 +64,13 @@ def main():
     elif choice == 3:
         exit()
 
+    # debugging purpose
+    with open("users.txt", "r") as f:
+        user_data_list = eval(f.read())
+        for array in user_data_list:
+            print(array)
+        f.close()
+
 
 def saving_register_data(user_data_list, user_type: str):
     new_username = input("Enter your username: ")
@@ -92,15 +91,15 @@ def saving_register_data(user_data_list, user_type: str):
             print("ID number must only contain number!")
             id_number = input("Enter your ID number: ")
     # append the data to user_data_list
-    if user_type == "user":
+    if user_type == "customer":
         user_data_list.append(
-            {
-                "id": id_number,
-                "username": new_username,
-                "password": new_password,
-                "status": "pending",
-                "type": "user",
-            }
+            [
+                id_number,
+                new_username,
+                new_password,
+                "pending",
+                "customer",
+            ]
         )
         print("===================================")
         print("You have successfully registered\nPlease wait for admin to approve")
@@ -116,19 +115,17 @@ def saving_register_data(user_data_list, user_type: str):
             }
         )
         print("===================================")
-        print("You have successfully registered\nPlease wait for Super User to approve")
+        print(
+            "You have successfully registered\nPlease wait for Super customer to approve"
+        )
         print("===================================")
     # open users.txt if it exists, otherwise create it
     # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
     # using json: https://pynative.com/python-save-dictionary-to-file/
     with open("users.txt", "a") as f:
         # dump data into text file
-        # ref: https://docs.python.org/3/library/json.html
-        json.dump(
-            user_data_list,
-            f,
-            indent=4,
-        )
+        # ref: https://www.geeksforgeeks.org/what-does-s-mean-in-a-python-format-string/
+        f.write("%s\n" % user_data_list)
         f.close()
 
 
@@ -137,11 +134,11 @@ def register(user_data_list):
     print("===================================")
     print("           Register as             ")
     print("===================================")
-    print("1. User")
+    print("1. Customer")
     print("2. Admin")
     selection = int(input("Enter your choice: "))
     if selection == 1:
-        saving_register_data(user_data_list=user_data_list, user_type="user")
+        saving_register_data(user_data_list=user_data_list, user_type="customer")
     elif selection == 2:
         saving_register_data(user_data_list=user_data_list, user_type="admin")
 
