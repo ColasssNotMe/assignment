@@ -19,7 +19,6 @@ def main():
         if f.read(1):
             f.seek(0)
             user_data_list = eval(f.read())
-            print(user_data_list)
 
         else:
             user_data_list = [[101, "101", "101", "approved", "superuser"]]
@@ -28,6 +27,9 @@ def main():
         f.close()
 
     # First screen
+    print("===================================")
+    print("          Welcome to KLCCC         ")
+    print("===================================")
     print("===================================")
     print("             Main Menu            ")
     print("===================================")
