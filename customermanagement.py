@@ -2,28 +2,59 @@
 def login(user_data_list):
     username = input("Enter your username: ")
     password = input("Enter your password: ")
+    # check if the username and password is correct, and also if verified
     for user in user_data_list:
-        if user["username"] == username and user["password"] == password:
-            if user["status"] == "approved":
-                print("===================================")
-                print("Login successful")
-                print("===================================\n\n\n")
-                approve_user(user_data_list=user_data_list)
-            elif user["status"] == "pending":
-                print("===================================")
-                print("Your account is still not approved yet")
-                print("===================================")
-        else:
-            print("===================================")
-            print(
-                "No account with such username and password found\nPlease register first"
-            )
-            print("===================================")
-        break
+        for data in user:
+            if data[1] == username and data[2] == password:
+                if data[3] == "approved":
+                    print("===================================")
+                    print("Login successful")
+                    print("===================================\n\n\n")
+                    if data[4] == "superuser":
+                        superuser_menu()
+                    elif data[4] == "admin":
+                        admin_menu()
+                    elif data[4] == "user":
+                        customer_menu()
+                    break
+                elif data[3] == "pending":
+                    print("===================================")
+                    print("Your account is still not approved yet")
+                    print("===================================")
+                else:
+                    print("===================================")
+                    print(
+                        "No account with such username and password found\nPlease register first"
+                    )
+                    print("===================================")
+                break
 
 
-# customer main menu
-def approve_user(user_data_list):
+def superuser_menu():
+    print("Currently logged in as Super User")
+    print("---------------------------------\n\n")
+    print("===================================")
+    print("               Menu                ")
+    print("===================================")
+    print("1. Add Users")
+    print("2. Verify New Customers")
+    print("3. Modify Users")
+    print("4. Disable User Access")
+    print("5. Inquiry of User's system usage")
+    print("6. Customer Order Status")
+    print("7. Reports")
+    # paste your code here
+
+
+def admin_menu():
+    print("Currently logged in as Admin")
+    print("---------------------------------\n\n")
+    print("1. Verify New Customers")
+    print("2. Customer Order Status")
+    print("3. Reports")
+
+
+def customer_menu():
     print("===================================")
     print("               Menu                ")
     print("===================================")
