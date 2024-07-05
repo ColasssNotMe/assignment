@@ -1,38 +1,12 @@
+from crud import update_user, delete_user, read_user
+
+
 # login function
-def login(user_data_list):
-    username = input("Enter your username: ")
-    password = input("Enter your password: ")
-    # check if the username and password is correct, and also if verified
-    for user in user_data_list:
-        for data in user:
-            if data[1] == username and data[2] == password:
-                if data[3] == "approved":
-                    print("===================================")
-                    print("Login successful")
-                    print("===================================\n\n\n")
-                    if data[4] == "superuser":
-                        superuser_menu()
-                    elif data[4] == "admin":
-                        admin_menu()
-                    elif data[4] == "user":
-                        customer_menu()
-                    break
-                elif data[3] == "pending":
-                    print("===================================")
-                    print("Your account is still not approved yet")
-                    print("===================================")
-                else:
-                    print("===================================")
-                    print(
-                        "No account with such username and password found\nPlease register first"
-                    )
-                    print("===================================")
-                break
 
 
-def superuser_menu():
+def superuser_menu(user_data_list):
     print("Currently logged in as Super User")
-    print("---------------------------------\n\n")
+    print("---------------------------------")
     print("===================================")
     print("               Menu                ")
     print("===================================")
@@ -43,12 +17,31 @@ def superuser_menu():
     print("5. Inquiry of User's system usage")
     print("6. Customer Order Status")
     print("7. Reports")
-    # paste your code here
+    # TODO: check for valid selection
+    selection = int(input("Enter your selection: "))
+    if selection == 3:
+        print("===================================")
+        print("            Modify Users           ")
+        print("===================================")
+        print("1. Update User")
+        print("2. Delete User")
+        selection = int(input("Enter your selection: "))
+        if selection == 1:
+            update_user()
+        elif selection == 2:
+            user_selection = input("Enter the username you want to delete: ")
+            delete_user(user_data_list=user_data_list, username=user_selection)
+            # save to file
+            with open("users.txt", "w") as f:
+                for record in user_data_list:
+                    recordString = ",".join(record)
+                    f.write(recordString)
+                f.close()
 
 
-def admin_menu():
+def admin_menu(user_data_list):
     print("Currently logged in as Admin")
-    print("---------------------------------\n\n")
+    print("---------------------------------")
     print("1. Verify New Customers")
     print("2. Customer Order Status")
     print("3. Reports")
@@ -80,17 +73,36 @@ def customer_menu():
 
 
 def order_product():
+    current_order_list = []
+    with open("orders.txt", "a") as f:
+        pass
+        f.close()
     print("===================================")
-    print("           Order Product           ")
+    print("              Product              ")
     print("===================================")
+    current_page = 1
+    # TODO: need to pei he other user
+    with open("products.txt", "r") as f:
+        product = f.readlines()
+        if current_page == 1:
+            # show only 5 product per page
+            for i in range(0, 5):
+                # split the data
+                for detail in product[i].split(","):
+                    # print only the product name
+                    print(detail[0])
+        selection = int(input("Enter the product name you want to order: "))
+    if selection not in [1, 2, 3, 4, 5]:
+        print("Invalid selection!")
+        selection = input("Enter your selection: ")
+    if selection == 1:
+        current_order_list.append()
+
+        # get product from text file
+        pass
+
     # get product from text file
     # TODO: change file name
-    with open("product.txt", "r") as file:
-        product = file.read()
-        item_counter = 1
-        for item in product:
-            print(f"{item_counter}.{item['product_name']} - {item['price']}")
-            item_counter += 1
 
 
 def service_repair():

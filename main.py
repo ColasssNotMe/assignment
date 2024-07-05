@@ -1,4 +1,11 @@
 # TODO: DO NOT COMMIT FILE YET, DO PSEUDOCODE
+# TODO: login when password false, it just break
+# TODO: check for every possible selection error
+
+# havent done: inventory, super user, admin
+# customer management part still left with things related to order
+
+
 # notepad data sequence:
 # id
 # username
@@ -7,25 +14,31 @@
 # type
 
 
+# TODO:check for register data if ==null
+
 # Super customer username: 101,password: 101
-from customermanagement import login
+from crud import register_user
+from customermanagement import customer_menu
+from usermanagement import superuser_menu, admin_menu
 
 
 def main():
+    user_data_list = []
     # read the file if it exists, otherwise create it
     with open("users.txt", "a+") as f:
-        f.seek(0)
         # add superuser to the file if it is empty
-        if f.read(1):
-            f.seek(0)
-            user_data_list = eval(f.read())
-
+        f.seek(0)
+        data = f.readlines()
+        if len(data) > 0:
+            for record in data:
+                recordList = record.split(",")
+                user_data_list.append(recordList)
         else:
-            user_data_list = [[101, "101", "101", "approved", "superuser"]]
-            f.seek(0)
-            f.write("%s\n" % user_data_list)
-        f.close()
+            user_data_list = [["101", "101", "101", "approved", "superuser", "\n"]]
+            # for record in user_data_list:
+            #     recordString = ",".join(record)
 
+            #     f.write(recordString + "\n")
     # First screen
     print("===================================")
     print("          Welcome to KLCCC         ")
@@ -46,7 +59,7 @@ def main():
         login(user_data_list=user_data_list)
     # Register screen
     elif choice == 2:
-        register(user_data_list=user_data_list)
+        register_user(user_data_list=user_data_list, user_type="customer")
     elif choice == 3:
         exit()
 
@@ -60,66 +73,6 @@ def main():
     #     f.close()
 
 
-def saving_register_data(user_data_list, user_type: str):
-    new_username = input("Enter your username: ")
-    new_password = input("Enter your password: ")
-    reenter_password = input("Re-enter your password: ")
-    # check if the password are same or not
-    while new_password != reenter_password:
-        print("Passwords does not match!")
-        new_password = input("Enter your password: ")
-        reenter_password = input("Re-enter your password: ")
-    id_number = input("Enter your IC/passport number: ")
-    while True:
-        # check if id is digit or not using try-except statement
-        try:
-            id_number = int(id_number)
-            break
-        except ValueError:
-            print("ID number must only contain number!")
-            id_number = input("Enter your ID number: ")
-    # append the data to user_data_list
-    if user_type == "customer":
-        user_data_list.append(
-            [
-                id_number,
-                new_username,
-                new_password,
-                "pending",
-                "customer",
-            ]
-        )
-        print("===================================")
-        print("You have successfully registered\nPlease wait for admin to approve")
-        print("===================================")
-    elif user_type == "admin":
-        user_data_list.append(
-            [
-                id_number,
-                new_username,
-                new_password,
-                "pending",
-                "admin",
-            ]
-        )
-        print("===================================")
-        print("You have successfully registered\nPlease wait for Super User to approve")
-        print("===================================")
-    # open users.txt if it exists, otherwise create it
-    # ref : https://www.pythontutorial.net/python-basics/python-write-text-file/
-
-    # clear the file
-    with open("users.txt", "w") as f:
-        pass
-        f.close()
-    # add data to the file
-    with open("users.txt", "a") as f:
-        # dump data into text file
-        # ref: https://www.geeksforgeeks.org/what-does-s-mean-in-a-python-format-string/
-        f.write("%s\n" % user_data_list)
-        f.close()
-
-
 # register function
 def register(user_data_list):
     print("===================================")
@@ -129,10 +82,40 @@ def register(user_data_list):
     print("2. Admin")
     selection = int(input("Enter your choice: "))
     if selection == 1:
-        saving_register_data(user_data_list=user_data_list, user_type="customer")
+        register_user(user_data_list=user_data_list, user_type="customer")
     elif selection == 2:
-        saving_register_data(user_data_list=user_data_list, user_type="admin")
+        register_user(user_data_list=user_data_list, user_type="admin")
 
 
-if __name__ == "__main__":
-    main()
+def login(user_data_list):
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
+    # check if the username and password is correct, and also if verified
+    for user in user_data_list:
+        if user[1] == username and user[2] == password:
+            if user[3] == "approved":
+                print("===================================")
+                print("Login successful")
+                print("===================================\n\n\n")
+                if user[4] == "superuser":
+                    superuser_menu(user_data_list=user_data_list)
+                elif user[4] == "admin":
+                    admin_menu()
+                # TODO: for customer, straight away pass user data to customer_menu to make process easier
+                elif user[4] == "customer":
+                    customer_menu()
+                else:
+                    print("Invalid user type")
+            elif user[3] == "pending":
+                print("===================================")
+                print("Your account is still not approved yet")
+                print("===================================")
+            else:
+                print("===================================")
+                print(
+                    "No account with such username and password found\nPlease register first"
+                )
+                print("===================================")
+
+
+main()
