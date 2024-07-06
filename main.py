@@ -35,16 +35,14 @@ def main():
                 user_data_list.append(recordList)
         else:
             user_data_list = [["101", "101", "101", "approved", "superuser", "\n"]]
-            # for record in user_data_list:
-            #     recordString = ",".join(record)
+    with open("products.txt", "a") as f:
+        f.close()
+    with open("orders.txt", "a") as f:
+        f.close()
 
-            #     f.write(recordString + "\n")
     # First screen
     print("===================================")
     print("          Welcome to KLCCC         ")
-    print("===================================")
-    print("===================================")
-    print("             Main Menu            ")
     print("===================================")
     print("1. Login")
     print("2. Register")
@@ -52,7 +50,7 @@ def main():
     choice = int(input("Enter your choice: "))
     while choice not in [1, 2, 3]:
         print("Invalid choice!")
-        choice = input("Enter your choice: ")
+        choice = int(input("Enter your choice: "))
 
     # Login screen
     if choice == 1:

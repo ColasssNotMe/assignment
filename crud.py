@@ -1,5 +1,9 @@
 def register_user(user_data_list, user_type: str):
     new_username = input("Enter your username: ")
+    # check for usename null
+    while new_username is None:
+        print("Username cannot be empty!")
+        new_username = input("Enter your username: ")
     new_password = input("Enter your password: ")
     reenter_password = input("Re-enter your password: ")
     # check if the password are same or not
@@ -8,14 +12,14 @@ def register_user(user_data_list, user_type: str):
         new_password = input("Enter your password: ")
         reenter_password = input("Re-enter your password: ")
     id_number = input("Enter your IC/passport number: ")
-    while True:
-        # check if id is digit or not using try-except statement
-        try:
-            id_number = id_number
-            break
-        except ValueError:
-            print("ID number must only contain number!")
-            id_number = input("Enter your ID number: ")
+    # check for null and only number
+    if id_number is None:
+        print("ID number cannot be empty!")
+        id_number = input("Enter your ID number: ")
+    elif id_number.isdigit() is False:
+        print("ID number must only contain number!")
+        id_number = input("Enter your ID number: ")
+
     # append the data to user_data_list
     if user_type == "customer":
         user_data_list.append(
