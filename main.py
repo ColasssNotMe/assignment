@@ -63,15 +63,6 @@ def main():
     elif choice == 3:
         exit()
 
-    # debugging purpose
-    # with open("users.txt", "r") as f:
-    #     user_data_list = eval(f.read())
-    #     for user in user_data_list:
-    #         for data in user:
-    #             if data == "superuser":
-    #                 print(user)
-    #     f.close()
-
 
 # register function
 def register(user_data_list):
