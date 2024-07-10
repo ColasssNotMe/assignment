@@ -4,7 +4,7 @@ from order_pages import page1, page2, page3
 # product[1] = product price
 
 
-def customer_menu():
+def customer_menu(current_user):
     print("===================================")
     print("               Menu                ")
     print("===================================")
@@ -14,11 +14,11 @@ def customer_menu():
     print("4. Order status")
     print("5. Reports")
     selection = int(input("Enter your selection: "))
-    while selection not in [1, 2, 3, 4]:
+    while selection not in [1, 2, 3, 4, 5]:
         print("Invalid selection!")
         selection = int(input("Enter your selection: "))
     if selection == 1:
-        order_product(current_page=1)
+        order_product(current_page=1, current_user=current_user)
     elif selection == 2:
         service_repair()
     elif selection == 3:
@@ -29,10 +29,12 @@ def customer_menu():
         reports()
 
 
-def order_product(current_page):
+def order_product(current_page, current_user):
     current_order_list = []
     all_product = []
     current_page_product = []
+    username = current_user[1]
+    simplified_current_order_list = []
     with open("orders.txt", "a") as f:
         pass
         f.close()
@@ -73,6 +75,9 @@ def order_product(current_page):
 
         elif selection in ["p1", "p2", "p3"]:
             order_product(current_page=selection[1])
+        elif selection == "b":
+            print("Back to menu")
+            break
         elif selection == "c":
             print("Checking out...")
             print("Order list: ")
@@ -85,19 +90,20 @@ def order_product(current_page):
             for product in current_order_list:
                 print(f"{counter}.{product[0]} - {product[1]}")
                 counter += 1
+                simplified_current_order_list.append([product[0], product[1]])
             checkout = input("Confirm order? (y/n): ")
             if checkout == "y":
                 with open("orders.txt", "a") as f:
-                    for product in current_order_list:
-                        f.write(f"{product[0]},{product[1]}\n")
-                    f.close()
+                    f.write(f"[{username},{current_order_list}]")
+                    f.write("\n")
+                    print("Order successful!")
                     break
-            if checkout == "n":
+            elif checkout == "n":
                 print("Order cancelled")
                 break
         else:
             print("Invalid selection!")
-    customer_menu()
+    customer_menu(current_user=current_user)
 
 
 # TODO: change file name

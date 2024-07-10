@@ -4,6 +4,16 @@ def register_user(user_data_list, user_type: str):
     while new_username is None:
         print("Username cannot be empty!")
         new_username = input("Enter your username: ")
+    with open("users.txt", "r") as f:
+        data = f.readlines()
+        for record in data:
+            recordList = record.split(",")
+            while True:
+                if recordList[1] == new_username:
+                    print("Username already exists!")
+                    new_username = input("Enter your username: ")
+                else:
+                    break
     new_password = input("Enter your password: ")
     reenter_password = input("Re-enter your password: ")
     # check if the password are same or not

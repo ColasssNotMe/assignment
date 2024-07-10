@@ -34,7 +34,10 @@ def main():
                 recordList = record.split(",")
                 user_data_list.append(recordList)
         else:
-            user_data_list = [["101", "101", "101", "approved", "superuser", "\n"]]
+            user_data_list = [
+                ["101", "101", "101", "approved", "superuser", "\n"],
+                ["1", "1", "1", "approved", "customer", "\n"],
+            ]
     with open("products.txt", "a") as f:
         f.close()
     with open("orders.txt", "a") as f:
@@ -96,7 +99,7 @@ def login(user_data_list):
                         admin_menu()
                     # TODO: for customer, straight away pass user data to customer_menu to make process easier
                     elif user[4] == "customer":
-                        customer_menu()
+                        customer_menu(current_user=user)
                     # return user so that dont need to loop the list again and again
                     return user
                     break
@@ -107,12 +110,9 @@ def login(user_data_list):
                     break
         else:
             print("===================================")
-            print(
-                "No account with such username and password found\nPlease register first"
-            )
+            print("No account with such username or password found")
             print("===================================")
             first_screen(user_data_list=user_data_list)
-            break
 
 
 main()
