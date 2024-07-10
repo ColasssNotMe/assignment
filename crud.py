@@ -13,12 +13,18 @@ def register_user(user_data_list, user_type: str):
         reenter_password = input("Re-enter your password: ")
     id_number = input("Enter your IC/passport number: ")
     # check for null and only number
-    if id_number is None:
-        print("ID number cannot be empty!")
-        id_number = input("Enter your ID number: ")
-    elif id_number.isdigit() is False:
-        print("ID number must only contain number!")
-        id_number = input("Enter your ID number: ")
+    while True:
+        if id_number is None:
+            print("ID number cannot be empty!")
+            id_number = input("Enter your ID number: ")
+        elif id_number.isdigit() is False:
+            print("ID number must only contain number!")
+            id_number = input("Enter your ID number: ")
+        elif len(id_number) != 12:
+            print("ID number must be 12 digit!")
+            id_number = input("Enter your ID number: ")
+        else:
+            break
 
     # append the data to user_data_list
     if user_type == "customer":

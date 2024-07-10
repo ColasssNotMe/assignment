@@ -39,7 +39,10 @@ def main():
         f.close()
     with open("orders.txt", "a") as f:
         f.close()
+    first_screen(user_data_list=user_data_list)
 
+
+def first_screen(user_data_list):
     # First screen
     print("===================================")
     print("          Welcome to KLCCC         ")
@@ -80,31 +83,36 @@ def login(user_data_list):
     username = input("Enter your username: ")
     password = input("Enter your password: ")
     # check if the username and password is correct, and also if verified
-    for user in user_data_list:
-        if user[1] == username and user[2] == password:
-            if user[3] == "approved":
-                print("===================================")
-                print("Login successful")
-                print("===================================\n\n\n")
-                if user[4] == "superuser":
-                    superuser_menu(user_data_list=user_data_list)
-                elif user[4] == "admin":
-                    admin_menu()
-                # TODO: for customer, straight away pass user data to customer_menu to make process easier
-                elif user[4] == "customer":
-                    customer_menu()
-                else:
-                    print("Invalid user type")
-            elif user[3] == "pending":
-                print("===================================")
-                print("Your account is still not approved yet")
-                print("===================================")
-            else:
-                print("===================================")
-                print(
-                    "No account with such username and password found\nPlease register first"
-                )
-                print("===================================")
+    while True:
+        for user in user_data_list:
+            if username == user[1] and password == user[2]:
+                if user[3] == "approved":
+                    print("===================================")
+                    print("Login successful")
+                    print("===================================\n\n\n")
+                    if user[4] == "superuser":
+                        superuser_menu(user_data_list=user_data_list)
+                    elif user[4] == "admin":
+                        admin_menu()
+                    # TODO: for customer, straight away pass user data to customer_menu to make process easier
+                    elif user[4] == "customer":
+                        customer_menu()
+                    # return user so that dont need to loop the list again and again
+                    return user
+                    break
+                elif user[3] == "pending":
+                    print("===================================")
+                    print("Your account is still not approved yet")
+                    print("===================================")
+                    break
+        else:
+            print("===================================")
+            print(
+                "No account with such username and password found\nPlease register first"
+            )
+            print("===================================")
+            first_screen(user_data_list=user_data_list)
+            break
 
 
 main()

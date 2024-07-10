@@ -30,71 +30,74 @@ def customer_menu():
 
 
 def order_product(current_page):
-    all_product = []
     current_order_list = []
+    all_product = []
     current_page_product = []
     with open("orders.txt", "a") as f:
         pass
         f.close()
-    print("===================================")
-    print("              Product              ")
-    print("===================================")
-
-    # TODO: need to pei he other user
-    # read the product from text file
+        # TODO: need to pei he other user
+        # read the product from text file
     with open("products.txt", "r") as f:
         data = f.readlines()
         for product in data:
             product_list = product.split(",")
             all_product.append(product_list)
         f.close()
+    while True:
+        print("===================================")
+        print("              Product              ")
+        print("===================================")
 
-    # len_shown_product : to know how many product shown in the page
-    # current_order_list : to store the product that user want to order
-    if current_page == 1:
-        len_shown_product, current_page_product = page1(all_product=all_product)
-        current_order_list = user_selection_order_product(
-            current_order_list=current_order_list,
-            length=len_shown_product,
-            current_page_product=current_page_product,
-        )
-    elif current_page == 2:
-        if len(all_product) > 5:
-            len_shown_product, current_page_product = page2(all_product=all_product)
-        else:
+        # len_shown_product : to know how many product shown in the page
+        # current_order_list : to store the product that user want to order
+        if current_page == 1:
             len_shown_product, current_page_product = page1(all_product=all_product)
-        current_order_list = user_selection_order_product(
-            current_order_list=current_order_list,
-            length=len_shown_product,
-            current_page_product=current_page_product,
-        )
-    elif current_page == 3:
-        if len(all_product) > 5:
-            len_shown_product, current_page_product = page3(all_product=all_product)
-        else:
-            len_shown_product, current_page_product = page2(all_product=all_product)
-        current_order_list = user_selection_order_product(
-            current_order_list=current_order_list,
-            length=len_shown_product,
-            current_page_product=current_page_product,
-        )
+        elif current_page == 2:
+            if len(all_product) > 5:
+                len_shown_product, current_page_product = page2(all_product=all_product)
+            else:
+                len_shown_product, current_page_product = page1(all_product=all_product)
+        elif current_page == 3:
+            if len(all_product) > 5:
+                len_shown_product, current_page_product = page3(all_product=all_product)
+            else:
+                len_shown_product, current_page_product = page2(all_product=all_product)
 
+        selection = input("Enter the product name you want to order: ")
 
-def user_selection_order_product(current_order_list, length, current_page_product):
-    selection = input("Enter the product name you want to order: ")
-
-    # check for shown product len to prevent index error
-    # what this append?
-    if int(selection) <= length or selection in ["p1", "p2", "p3"]:
-        if selection == ["1", "2", "3", "4", "5"]:
+        # check for shown product len to prevent index error
+        if selection.isdigit() and int(selection) <= len_shown_product:
+            print("Adding product")
             current_order_list.append(current_page_product[int(selection) - 1])
+
         elif selection in ["p1", "p2", "p3"]:
             order_product(current_page=selection[1])
+        elif selection == "c":
+            print("Checking out...")
+            print("Order list: ")
 
-    else:
-        print("Invalid selection!")
-        selection = int(input("Enter your selection: "))
-    return current_order_list
+            # show the order list
+            print("===================================")
+            print("              Order List           ")
+            print("===================================")
+            counter = 1
+            for product in current_order_list:
+                print(f"{counter}.{product[0]} - {product[1]}")
+                counter += 1
+            checkout = input("Confirm order? (y/n): ")
+            if checkout == "y":
+                with open("orders.txt", "a") as f:
+                    for product in current_order_list:
+                        f.write(f"{product[0]},{product[1]}\n")
+                    f.close()
+                    break
+            if checkout == "n":
+                print("Order cancelled")
+                break
+        else:
+            print("Invalid selection!")
+    customer_menu()
 
 
 # TODO: change file name
