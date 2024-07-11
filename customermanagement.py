@@ -2,6 +2,7 @@ from crud import update_user, delete_user, read_user
 from order_pages import page1, page2, page3
 # product[0] = product name
 # product[1] = product price
+# TODO: payment page missed
 
 
 def customer_menu(current_user):
@@ -35,11 +36,71 @@ def order_product(current_page, current_user):
     current_page_product = []
     username = current_user[1]
     simplified_current_order_list = []
+    # init orders.txt
     with open("orders.txt", "a") as f:
         pass
         f.close()
         # TODO: need to pei he other user
         # read the product from text file
+        # TODO: temp data
+    temp_product = [
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+        "item1,",
+        "price1,",
+        "\n",
+    ]
+    with open("products.txt", "a") as f:
+        f.writelines(temp_product)
     with open("products.txt", "r") as f:
         data = f.readlines()
         for product in data:
@@ -74,7 +135,7 @@ def order_product(current_page, current_user):
             current_order_list.append(current_page_product[int(selection) - 1])
 
         elif selection in ["p1", "p2", "p3"]:
-            order_product(current_page=selection[1])
+            order_product(current_page=int(selection[1]), current_user=current_user)
         elif selection == "b":
             print("Back to menu")
             break
@@ -92,15 +153,47 @@ def order_product(current_page, current_user):
                 counter += 1
                 simplified_current_order_list.append([product[0], product[1]])
             checkout = input("Confirm order? (y/n): ")
-            if checkout == "y":
-                with open("orders.txt", "a") as f:
-                    f.write(f"[{username},{current_order_list}]")
-                    f.write("\n")
-                    print("Order successful!")
+            while True:
+                if checkout == "y":
+                    # calculate total order price
+                    total = 0
+                    for item in simplified_current_order_list:
+                        total += int(item[1])
+
+                    print("===================================")
+                    print("              Payment              ")
+                    print("===================================")
+                    print("Total price: ", total)
+                    print("1. Pay Now")
+                    print("2. Pay Later")
+                    print("3. Cancel")
+                    payment = input("Enter your selection: ")
+                    if payment == "1":
+                        print("Payment successful!")
+                        with open("orders.txt", "a") as f:
+                            f.write(f"[{username},paid,{current_order_list}]")
+                            f.write("\n")
+                            print("Order successful!")
+                        break
+                    elif payment == "2":
+                        print("Payment later")
+                        with open("orders.txt", "a") as f:
+                            f.write(f"[{username},notpaid,{current_order_list}]")
+                            print(
+                                "Order successful!. Please pay as soon as possible in order to proceed"
+                            )
+                            f.write("\n")
+                        break
+                    elif payment == "3":
+                        print("Order cancelled")
+                        current_order_list = []
+                        pass
+                elif checkout == "n":
+                    print("Order cancelled")
                     break
-            elif checkout == "n":
-                print("Order cancelled")
-                break
+                else:
+                    print("Invalid selection!")
+                    pass
         else:
             print("Invalid selection!")
     customer_menu(current_user=current_user)

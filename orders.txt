@@ -1,1 +1,0 @@
-[1,[['item1', 'price1', '\n'], ['item2', 'price2', '\n'], ['item1', 'price1', '\n'], ['item2', 'price2', '\n'], ['item1', 'price1', '\n']]]
