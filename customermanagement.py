@@ -6,6 +6,11 @@ import datetime as dt
 
 
 def customer_menu(current_user):
+    """_summary_
+
+    Args:
+        current_user (list): info about current login user
+    """
     print("===================================")
     print("               Menu                ")
     print("===================================")
@@ -25,12 +30,21 @@ def customer_menu(current_user):
     elif selection == 3:
         modify_request()
     elif selection == 4:
-        order_status()
+        order_status(username=current_user[1])
     elif selection == 5:
         reports()
 
 
 def order_product(current_page, current_user):
+    """_summary_
+
+    Args:
+        current_page (int): get the current page
+        current_user (list): current user list
+
+    Returns:
+        function: customer_menu
+    """
     current_order_list = []
     all_product = []
     current_page_product = []
@@ -172,16 +186,18 @@ def order_product(current_page, current_user):
                         print("------------Payment successful!-----------")
                         with open("orders.txt", "a") as f:
                             f.write(
-                                f"[{username},paid,{dt.datetime.now()},{current_order_list}]"
+                                f"{username}/paid/{dt.datetime.now()}/{simplified_current_order_list}"
                             )
                             f.write("\n")
                             print("Order placed!")
-                            current_order_list = []
-                        break
+                            simplified_current_order_list = []
+                        return customer_menu(current_user=current_user)
                     elif payment == "2":
                         print("Payment later")
                         with open("orders.txt", "a") as f:
-                            f.write(f"[{username},notpaid,{current_order_list}]")
+                            f.write(
+                                f"[{username}/notpaid/{simplified_current_order_list}]"
+                            )
                             print(
                                 "!!!Order successful!. Please pay as soon as possible in order to proceed!!!"
                             )
@@ -199,7 +215,7 @@ def order_product(current_page, current_user):
                     pass
         else:
             print("Invalid selection!")
-    customer_menu(current_user=current_user)
+    return customer_menu(current_user=current_user)
 
 
 # TODO: change file name
@@ -217,15 +233,21 @@ def modify_request():
 
 
 def order_status(username):
+    print(username)
+    """check for the user all order and their status"""
     user_order = []
     with open("orders.txt", "r") as f:
         data = f.readlines()
         for order in data:
-            if order[0] == username:
+            list_data = order.split("/")
+            order_username, status, time, order = list_data
+            # convert the order string to list
+            order = eval(order)
+            if order_username == username:
                 user_order.append(order)
     print("Select the order you want to check: ")
     for i in range(len(user_order)):
-        print(f"{i+1}.{user_order[i[2]]} ")
+        print(f"{i+1}.{status} - {time} ")
 
 
 def reports():

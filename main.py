@@ -89,11 +89,9 @@ def login(user_data_list):
         password = input("Enter your password: ")
         if username == "":
             print("Username cannot be empty")
-            username = input("Enter your username: ")
             continue
-        if password == "":
+        elif password == "":
             print("Password cannot be empty")
-            password = input("Enter your password: ")
             continue
         login_successful = False
         for user in user_data_list:
