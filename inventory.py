@@ -2,6 +2,7 @@
 # use orders.txt to store customer order data
 # Define the file to store data
 # if using this file, do "from inventory_system import menu"
+# make a "inventory" option from admin / superuser menu
 ## no global variable
 DATA_FILE = "inventory_data.txt"
 

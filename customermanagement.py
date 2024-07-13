@@ -1,7 +1,7 @@
-from crud import update_user, delete_user, read_user
+# from crud import update_user, delete_user, read_user
 from order_pages import page1, page2, page3
-# product[0] = product name
-# product[1] = product price
+import datetime as dt
+# Do finish basic function before do change username/password function
 # TODO: payment page missed
 
 
@@ -169,30 +169,33 @@ def order_product(current_page, current_user):
                     print("3. Cancel")
                     payment = input("Enter your selection: ")
                     if payment == "1":
-                        print("Payment successful!")
+                        print("------------Payment successful!-----------")
                         with open("orders.txt", "a") as f:
-                            f.write(f"[{username},paid,{current_order_list}]")
+                            f.write(
+                                f"[{username},paid,{dt.datetime.now()},{current_order_list}]"
+                            )
                             f.write("\n")
-                            print("Order successful!")
+                            print("Order placed!")
+                            current_order_list = []
                         break
                     elif payment == "2":
                         print("Payment later")
                         with open("orders.txt", "a") as f:
                             f.write(f"[{username},notpaid,{current_order_list}]")
                             print(
-                                "Order successful!. Please pay as soon as possible in order to proceed"
+                                "!!!Order successful!. Please pay as soon as possible in order to proceed!!!"
                             )
                             f.write("\n")
                         break
                     elif payment == "3":
-                        print("Order cancelled")
+                        print("----------Order cancelled----------")
                         current_order_list = []
                         pass
                 elif checkout == "n":
-                    print("Order cancelled")
+                    print("----------Order cancelled----------")
                     break
                 else:
-                    print("Invalid selection!")
+                    print("------------Invalid selection!------------")
                     pass
         else:
             print("Invalid selection!")
@@ -210,8 +213,19 @@ def modify_request():
     pass
 
 
-def order_status():
-    pass
+# TODO: do this function
+
+
+def order_status(username):
+    user_order = []
+    with open("orders.txt", "r") as f:
+        data = f.readlines()
+        for order in data:
+            if order[0] == username:
+                user_order.append(order)
+    print("Select the order you want to check: ")
+    for i in range(len(user_order)):
+        print(f"{i+1}.{user_order[i[2]]} ")
 
 
 def reports():
