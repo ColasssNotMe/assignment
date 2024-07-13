@@ -233,9 +233,13 @@ def modify_request():
 
 
 def order_status(username):
-    print(username)
-    """check for the user all order and their status"""
-    user_order = []
+    """check for the user all order and their status
+    order_item = [item,price]
+
+    """
+    order_item = []
+    status_list = []
+    time_list = []
     with open("orders.txt", "r") as f:
         data = f.readlines()
         for order in data:
@@ -244,10 +248,29 @@ def order_status(username):
             # convert the order string to list
             order = eval(order)
             if order_username == username:
-                user_order.append(order)
+                status_list.append(status)
+                time_list.append(time)
+                order_item.append(order)
     print("Select the order you want to check: ")
-    for i in range(len(user_order)):
-        print(f"{i+1}.{status} - {time} ")
+    if len(order_item) == 0:
+        print("No order found!")
+    else:
+        for i in range(len(order_item)):
+            print(f"{i+1}.{status_list[i]} - {time_list[i]}")
+        selection = input("Enter the order number: ")
+        while not selection.isdigit() or int(selection) > len(order_item) + 1:
+            print("Invalid selection!")
+            selection = input("Enter the order number: ")
+        print("Order details: ")
+    """
+    get the order = order_item[int(selection) - 1
+    get the order item = order_item[int(selection) - 1][i][0]
+    get the order price = order_item[int(selection) - 1][i][1]
+    """
+    for i in range(len(order_item[int(selection) - 1])):
+        print(
+            f"{i+1}.{order_item[int(selection) - 1][i][0]} - {order_item[int(selection) - 1][i][1]}"
+        )
 
 
 def reports():
