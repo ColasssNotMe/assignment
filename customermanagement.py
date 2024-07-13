@@ -271,6 +271,26 @@ def order_status(username):
         print(
             f"{i+1}.{order_item[int(selection) - 1][i][0]} - {order_item[int(selection) - 1][i][1]}"
         )
+    if status_list[int(selection) - 1] == "notpaid":
+        print("Payment not made yet!")
+        print("1. Pay now")
+        print("2. Modify order")
+        print("3. Back to menu")
+        input("Enter your selection: ")
+        if input == "1":
+            print("Payment successful!")
+            status_list[int(selection) - 1] = "paid"
+
+        elif input == "2":
+            return modify_request()
+
+        elif input == "3":
+            print("Back to menu")
+            return customer_menu(current_user=username)
+    else:
+        print("1. Back")
+        if input("Enter your selection: ") == "1":
+            return order_status(username=username)
 
 
 def reports():
