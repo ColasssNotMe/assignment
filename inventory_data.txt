@@ -1,0 +1,5 @@
+Inventory:
+1: 1
+item: 6
+Purchase Orders:
+24: item, 3, in process

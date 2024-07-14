@@ -2,7 +2,7 @@
 from order_pages import page1, page2, page3
 import datetime as dt
 # Do finish basic function before do change username/password function
-# TODO: payment page missed
+# TODO: change file name
 
 
 def customer_menu(current_user):
@@ -120,7 +120,6 @@ def order_product(current_page, current_user):
         for product in data:
             product_list = product.split(",")
             all_product.append(product_list)
-        f.close()
     while True:
         print("===================================")
         print("              Product              ")
@@ -218,9 +217,6 @@ def order_product(current_page, current_user):
     return customer_menu(current_user=current_user)
 
 
-# TODO: change file name
-
-
 def service_repair():
     pass
 
@@ -257,39 +253,54 @@ def order_status(username):
     else:
         for i in range(len(order_item)):
             print(f"{i+1}.{status_list[i]} - {time_list[i]}")
+        print("b. Back")
+    selection = input("Enter the order number: ")
+    while (
+        not (selection.isdigit() and 1 <= int(selection) <= len(order_item))
+        and selection != "b"
+    ):
+        print("Invalid selection!")
         selection = input("Enter the order number: ")
-        while not selection.isdigit() or int(selection) > len(order_item) + 1:
-            print("Invalid selection!")
-            selection = input("Enter the order number: ")
+
+    if selection == "b":
+        return customer_menu(current_user=username)
         print("Order details: ")
     """
     get the order = order_item[int(selection) - 1
     get the order item = order_item[int(selection) - 1][i][0]
     get the order price = order_item[int(selection) - 1][i][1]
     """
+    total = 0
+    # show all order item and price
     for i in range(len(order_item[int(selection) - 1])):
         print(
             f"{i+1}.{order_item[int(selection) - 1][i][0]} - {order_item[int(selection) - 1][i][1]}"
         )
+        total += int(order_item[int(selection) - 1][i][1])
+    print(f"Total price: {total}")
     if status_list[int(selection) - 1] == "notpaid":
         print("Payment not made yet!")
         print("1. Pay now")
         print("2. Modify order")
         print("3. Back to menu")
-        input("Enter your selection: ")
-        if input == "1":
+        selection = input("Enter your selection: ")
+        if selection == "1":
             print("Payment successful!")
             status_list[int(selection) - 1] = "paid"
 
-        elif input == "2":
+        elif selection == "2":
             return modify_request()
 
-        elif input == "3":
+        elif selection == "3":
             print("Back to menu")
             return customer_menu(current_user=username)
     else:
-        print("1. Back")
-        if input("Enter your selection: ") == "1":
+        print("b. Back")
+        selection = input("Enter your selection: ")
+        while selection != "b":
+            print("Invalid selection!")
+            selection = input("Enter your selection: ")
+        else:
             return order_status(username=username)
 
 
