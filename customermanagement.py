@@ -1,5 +1,6 @@
 # from crud import update_user, delete_user, read_user
 from order_pages import page1, page2, page3
+from inventory import load_data
 import datetime as dt
 # Do finish basic function before do change username/password function
 # TODO: change file name
@@ -46,7 +47,6 @@ def order_product(current_page, current_user):
         function: customer_menu
     """
     current_order_list = []
-    all_product = []
     current_page_product = []
     username = current_user[1]
     simplified_current_order_list = []
@@ -57,69 +57,8 @@ def order_product(current_page, current_user):
         # TODO: need to pei he other user
         # read the product from text file
         # TODO: temp data
-    temp_product = [
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-        "item1,",
-        "price1,",
-        "\n",
-    ]
-    with open("products.txt", "a") as f:
-        f.writelines(temp_product)
-    with open("products.txt", "r") as f:
-        data = f.readlines()
-        for product in data:
-            product_list = product.split(",")
-            all_product.append(product_list)
+    all_product = load_data()[0]
+
     while True:
         print("===================================")
         print("              Product              ")
@@ -128,17 +67,17 @@ def order_product(current_page, current_user):
         # len_shown_product : to know how many product shown in the page
         # current_order_list : to store the product that user want to order
         if current_page == 1:
-            len_shown_product, current_page_product = page1(all_product=all_product)
+            len_shown_product, current_page_product = page1(inventory=all_product)
         elif current_page == 2:
             if len(all_product) > 5:
-                len_shown_product, current_page_product = page2(all_product=all_product)
+                len_shown_product, current_page_product = page2(inventory=all_product)
             else:
-                len_shown_product, current_page_product = page1(all_product=all_product)
+                len_shown_product, current_page_product = page1(inventory=all_product)
         elif current_page == 3:
             if len(all_product) > 5:
-                len_shown_product, current_page_product = page3(all_product=all_product)
+                len_shown_product, current_page_product = page3(inventory=all_product)
             else:
-                len_shown_product, current_page_product = page2(all_product=all_product)
+                len_shown_product, current_page_product = page2(inventory=all_product)
 
         selection = input("Enter the product name you want to order: ")
 
