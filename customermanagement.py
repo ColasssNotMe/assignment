@@ -3,7 +3,7 @@ from order_pages import page1, page2, page3
 from inventory import load_data
 import datetime as dt
 # Do finish basic function before do change username/password function
-# TODO: change file name
+# FIXME: need to make customer able to see what are currently on service
 
 
 def customer_menu(current_user):
@@ -27,13 +27,13 @@ def customer_menu(current_user):
     if selection == 1:
         order_product(current_page=1, current_user=current_user)
     elif selection == 2:
-        service_repair()
+        service_repair(username=current_user[1])
     elif selection == 3:
-        modify_request()
+        modify_request(username=current_user[1])
     elif selection == 4:
         order_status(username=current_user[1])
     elif selection == 5:
-        reports()
+        reports(username=current_user[1])
 
 
 def order_product(current_page, current_user):
@@ -134,7 +134,7 @@ def order_product(current_page, current_user):
                         print("Payment later")
                         with open("orders.txt", "a") as f:
                             f.write(
-                                f"[{username}/notpaid/{simplified_current_order_list}]"
+                                f"{username}/notpaid/{dt.datetime.now()}/{simplified_current_order_list}"
                             )
                             print(
                                 "!!!Order successful!. Please pay as soon as possible in order to proceed!!!"
@@ -156,8 +156,76 @@ def order_product(current_page, current_user):
     return customer_menu(current_user=current_user)
 
 
-def service_repair():
-    pass
+def service_repair(username):
+    """_summary_
+
+    Args:
+        username (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+
+    order_item = []
+    status_list = []
+    time_list = []
+    with open("orders.txt", "r") as f:
+        data = f.readlines()
+        for order in data:
+            list_data = order.split("/")
+            order_username, status, time, order = list_data
+            # convert the order string to list
+            order = eval(order)
+            if order_username == username:
+                status_list.append(status)
+                time_list.append(time)
+                order_item.append(order)
+    print("-----------------------------------")
+    print("Select order: ")
+    if len(order_item) == 0:
+        print("No order found!")
+        return customer_menu(current_user=username)
+    else:
+        for i in range(len(order_item)):
+            if status_list[i] == "paid":
+                print(f"{i+1}.{status_list[i]} - {time_list[i]}")
+        print("b. Back")
+    selection = input("Enter the order number: ")
+    while (
+        not (selection.isdigit() and 1 <= int(selection) <= len(order_item))
+        and selection != "b"
+    ):
+        print("Invalid selection!")
+        selection = input("Enter the order number: ")
+
+    if selection == "b":
+        return customer_menu(current_user=username)
+    print("-----------------------------------")
+    print("Order details: ")
+    """
+    get the order = order_item[int(selection) - 1
+    get the order item = order_item[int(selection) - 1][i][0]
+    get the order price = order_item[int(selection) - 1][i][1]
+    """
+    # show all order
+    for i in range(len(order_item[int(selection) - 1])):
+        print(f"{i+1}.{order_item[int(selection) - 1][i][0]}")
+    request_service_selection = input("Enter the item you want to request service: ")
+    while not (
+        request_service_selection.isdigit()
+        and 1 <= int(request_service_selection) <= len(order_item[int(selection) - 1])
+    ):
+        print("Invalid selection!")
+        request_service_selection = input(
+            "Enter the item you want to request service: "
+        )
+    # get the item name according to the request_service_selection
+    item_name = order_item[int(selection) - 1][int(request_service_selection) - 1][0]
+    with open("service_repair.txt", "a") as f:
+        f.write(f"{username}/{item_name}/{dt.datetime.now()}/service")
+        f.write("\n")
+        print("Service request sent!")
+        return service_repair(username=username)
 
 
 def modify_request():
@@ -186,9 +254,11 @@ def order_status(username):
                 status_list.append(status)
                 time_list.append(time)
                 order_item.append(order)
+    print("-----------------------------------")
     print("Select the order you want to check: ")
     if len(order_item) == 0:
         print("No order found!")
+        return customer_menu(current_user=username)
     else:
         for i in range(len(order_item)):
             print(f"{i+1}.{status_list[i]} - {time_list[i]}")
@@ -203,6 +273,7 @@ def order_status(username):
 
     if selection == "b":
         return customer_menu(current_user=username)
+        print("-----------------------------------")
         print("Order details: ")
     """
     get the order = order_item[int(selection) - 1
@@ -211,6 +282,7 @@ def order_status(username):
     """
     total = 0
     # show all order item and price
+    print("-----------------------------------")
     for i in range(len(order_item[int(selection) - 1])):
         print(
             f"{i+1}.{order_item[int(selection) - 1][i][0]} - {order_item[int(selection) - 1][i][1]}"
@@ -226,6 +298,7 @@ def order_status(username):
         if selection == "1":
             print("Payment successful!")
             status_list[int(selection) - 1] = "paid"
+            return customer_menu(current_user=username)
 
         elif selection == "2":
             return modify_request()
