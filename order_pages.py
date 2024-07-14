@@ -23,12 +23,11 @@ def page1(inventory):
     for product in inventory_list:
         print(f"{counter}. {product[0]}")
         counter += 1
-        if counter > 5:
-            print("p2. Page 2")
-            print("p3. Page 3")
-            print("c. Complete order")
-            print("b. Back to main menu")
-            break
+    print("p2. Page 2")
+    print("p3. Page 3")
+    print("c. Complete order")
+    print("b. Back to main menu")
+
     return len(current_page_product), current_page_product
 
 
@@ -39,12 +38,11 @@ def page2(inventory):
     for product in inventory_list[5:]:
         print(f"{counter}. {product[0]}")
         counter += 1
-        if counter > 5:
-            print("p1. Page 1")
-            print("p3. Page 3")
-            print("c. Complete order")
-            print("b. Back to main menu")
-            break
+
+    print("p1. Page 1")
+    print("p3. Page 3")
+    print("c. Complete order")
+    print("b. Back to main menu")
     return len(current_page_product), current_page_product
 
 
@@ -55,10 +53,8 @@ def page3(inventory):
     for product in inventory_list[10:]:
         print(f"{counter}. {product[0]}")
         counter += 1
-        if counter > 5:
-            print("p1. Page 1")
-            print("p2. Page 2")
-            print("c. Complete order")
-            print("b. Back to main menu")
-            break
+    print("p1. Page 1")
+    print("p2. Page 2")
+    print("c. Complete order")
+    print("b. Back to main menu")
     return len(current_page_product), current_page_product
