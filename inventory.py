@@ -4,22 +4,17 @@
 # if using this file, do "from inventory_system import menu"
 # make a "inventory" option from admin / superuser menu
 ## no global variable
-DATA_FILE = "inventory_data.txt"
-
-
-# Initialize or load inventory data
 def initialize_data():
     try:
-        with open(DATA_FILE, "x") as f:
+        with open("INVENTORY_DATA.TXT", "x") as f:
             f.write("Inventory:\n")
             f.write("Purchase Orders:\n")
     except FileExistsError:
         pass
 
 
-# Save data to file
 def save_data(inventory, purchase_orders):
-    with open(DATA_FILE, "w") as f:
+    with open("INVENTORY_DATA.TXT", "w") as f:
         f.write("Inventory:\n")
         for item, quantity in inventory.items():
             f.write(f"{item}: {quantity}\n")
@@ -31,11 +26,10 @@ def save_data(inventory, purchase_orders):
             f.write(f"{order_id}: {item_name}, {quantity}, {status}\n")
 
 
-# Load data from file
 def load_data():
     inventory = {}
     purchase_orders = {}
-    with open(DATA_FILE, "r") as f:
+    with open("INVENTORY_DATA.TXT", "r") as f:
         lines = f.readlines()
         section = None
         for line in lines:
@@ -58,20 +52,17 @@ def load_data():
     return inventory, purchase_orders
 
 
-# Add or update inventory item
 def add_or_update_inventory(item_name, quantity):
     inventory, purchase_orders = load_data()
     inventory[item_name] = inventory.get(item_name, 0) + quantity
     save_data(inventory, purchase_orders)
 
 
-# Check stock
 def check_stock(item_name):
     inventory, _ = load_data()
-    return inventory.get(item_name, 0)  # Returns 0 if item_name is not found
+    return inventory.get(item_name, 0)
 
 
-# Adjust stock
 def adjust_stock(item_name, quantity):
     inventory, purchase_orders = load_data()
     if item_name in inventory:
@@ -83,7 +74,6 @@ def adjust_stock(item_name, quantity):
         print("Item not found in inventory.")
 
 
-# Create purchase order
 def create_purchase_order(order_id, item_name, quantity):
     inventory, purchase_orders = load_data()
     if item_name in inventory:
@@ -97,7 +87,6 @@ def create_purchase_order(order_id, item_name, quantity):
         print("Item not found in inventory.")
 
 
-# Modify purchase order
 def modify_purchase_order(order_id, new_item_name=None, new_quantity=None):
     inventory, purchase_orders = load_data()
     if order_id in purchase_orders:
@@ -110,7 +99,6 @@ def modify_purchase_order(order_id, new_item_name=None, new_quantity=None):
         print("Order ID not found.")
 
 
-# Cancel purchase order
 def cancel_purchase_order(order_id):
     inventory, purchase_orders = load_data()
     if order_id in purchase_orders:
@@ -120,13 +108,11 @@ def cancel_purchase_order(order_id):
         print("Order ID not found.")
 
 
-# Get purchase order status
 def get_order_status(order_id):
     _, purchase_orders = load_data()
     return purchase_orders.get(order_id, {}).get("status", "Order ID not found.")
 
 
-# Generate reports
 def generate_report():
     inventory, purchase_orders = load_data()
     print("Inventory:")
@@ -140,7 +126,6 @@ def generate_report():
         print(f"{order_id}: {item_name}, {quantity}, {status}")
 
 
-# Main menu
 def menu():
     initialize_data()
     while True:
