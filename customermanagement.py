@@ -5,6 +5,10 @@ import datetime as dt
 # FIXME: need to make customer able to see what are currently on service
 # TODO:report
 # TODO:modify request
+# variable :
+# all_ordered_item_list = all current user item list
+# order_index_current = the index of the item that is not paid, only count in 1 user, not include other user
+# order_index_all = the index of the order, including other user
 
 
 def customer_menu(current_user):
@@ -145,10 +149,10 @@ def order_product(current_page, current_user):
                         pass
                 elif checkout == "n":
                     print("----------Order cancelled----------")
-                    break
+                    return customer_menu(current_user=current_user)
                 else:
                     print("------------Invalid selection!------------")
-                    pass
+                    return customer_menu(current_user=current_user)
         else:
             print("Invalid selection!")
     return customer_menu(current_user=current_user)
@@ -228,22 +232,21 @@ def modify_request(username, current_user):
     status_list = []
     time_list = []
     old_and_new_order_list_combined = []
-    currentuser_order_number_list = []
-    counter = -1
+    order_index_all = []
     with open("orders.txt", "r") as f:
         data = f.readlines()
+        index = -1
         for order in data:
-            counter += 1
             list_data = order.split("/")
             order_username, status, time, order = list_data
             # convert the order string to list
+            index += 1
             order = eval(order)
             if order_username == username:
                 status_list.append(status)
                 time_list.append(time)
                 all_ordered_item_list.append(order)
-                # only use this to know the numbering of the order in the order_list.txt
-                currentuser_order_number_list.append(counter)
+                order_index_all.append(index)
 
     print("-----------------------------------")
     print("Select the order you want to modify")
@@ -252,40 +255,41 @@ def modify_request(username, current_user):
         print("No order found!")
         return customer_menu(current_user=username)
     else:
+        order_index_current = []
+        counter = 1
         for i in range(len(all_ordered_item_list)):
-            real_item_number_list = []
             if status_list[i] == "notpaid":
-                counter = 1
                 print(f"{counter}.{status_list[i]} - {time_list[i]}")
                 counter += 1
-                real_item_number_list.append(i)
+                order_index_current.append(i)
         print("b. Back")
-    selection = input("Enter the order number: ")
+    order_num_selection = input("Enter the order number: ")
     while (
-        not (selection.isdigit() and 1 <= int(selection) <= len(real_item_number_list))
-        and selection != "b"
+        not (order_num_selection.isdigit() and 1 <= int(order_num_selection) <= counter)
+        and order_num_selection != "b"
     ):
         print("Invalid selection!")
-        selection = input("Enter the order number: ")
+        order_num_selection = input("Enter the order number: ")
 
-    if selection == "b":
+    if order_num_selection == "b":
         return customer_menu(current_user=username)
     print("-----------------------------------")
     print("Order details: ")
+
     for i in range(
-        len(all_ordered_item_list[real_item_number_list[int(selection) - 1]])
+        len(all_ordered_item_list[order_index_current[int(order_num_selection) - 1]])
     ):
         print(
-            f"{i+1}.{all_ordered_item_list[real_item_number_list[int(selection) - 1]][i][0]}"
+            f"{i+1}.{all_ordered_item_list[order_index_current[int(order_num_selection) - 1]][i][0]}"
         )
         old_and_new_order_list_combined.append(
-            all_ordered_item_list[real_item_number_list[int(selection) - 1]][i]
+            all_ordered_item_list[order_index_current[int(order_num_selection) - 1]][i]
         )
 
-    print("1. Add item")
-    print("2. Remove item")
+    print("a. Add item")
+    print("b. Remove item")
     modify_selection = input("Enter your selection: ")
-    if modify_selection == "1":
+    if modify_selection == "a":
         # review this part
         current_page = 1
         current_page_product = []
@@ -335,14 +339,71 @@ def modify_request(username, current_user):
             elif selection == "c":
                 print("Checking out...")
                 print("Order list: ")
-
+                counter = 1
                 for i in old_and_new_order_list_combined:
-                    counter = 1
                     print(f"{counter}. {i[0]} - {i[1]}")
                     counter += 1
-                # TODO: enable order to be cancel
-                # TODO: when adding new item, it never append to the "old" list
-                # TODO: overwrite the old item data after checkcout
+                checkout = input("Confirm order? (y/n): ")
+                while True:
+                    if checkout == "y":
+                        # remove the old order from the list and also the text file
+                        order_to_delete = all_ordered_item_list[
+                            int(order_num_selection) - 1
+                        ]
+                        with open("orders.txt", "w+") as f:
+                            data = f.readlines()
+                            for order in data:
+                                list_data = order.split("/")
+                                list_data[order_to_delete].replace("", "")
+
+                        # calculate total order price
+                        total = 0
+                        for item in old_and_new_order_list_combined:
+                            total += int(item[1])
+
+                        print("===================================")
+                        print("              Payment              ")
+                        print("===================================")
+                        print("Total price: ", total)
+                        print("1. Pay Now")
+                        print("2. Pay Later")
+                        print("3. Cancel")
+                        payment = input("Enter your selection: ")
+                        if payment == "1":
+                            print("------------Payment successful!-----------")
+                            with open("orders.txt", "a") as f:
+                                f.write(
+                                    f"{username}/paid/{dt.datetime.now()}/{old_and_new_order_list_combined}"
+                                )
+                                f.write("\n")
+                                print("Order placed!")
+                                old_and_new_order_list_combined = []
+                            return customer_menu(current_user=current_user)
+                        elif payment == "2":
+                            print("Payment later")
+                            with open("orders.txt", "a") as f:
+                                f.write(
+                                    f"{username}/notpaid/{dt.datetime.now()}/{old_and_new_order_list_combined}"
+                                )
+                                print(
+                                    "!!!Order successful!. Please pay as soon as possible in order to proceed!!!"
+                                )
+                                f.write("\n")
+                            return customer_menu(current_user=current_user)
+                        elif payment == "3":
+                            print("----------Order cancelled----------")
+                            old_and_new_order_list_combined = []
+                            return customer_menu(current_user=current_user)
+                    elif checkout == "n":
+                        print("----------Order cancelled----------")
+                        return customer_menu(current_user=current_user)
+                    else:
+                        print("------------Invalid selection!------------")
+    elif modify_selection == "b":
+        return modify_request(username=username, current_user=current_user)
+    # TODO: enable order to be cancel
+    # TODO: when adding new item, it never append to the "old" list
+    # TODO: overwrite the old item data after checkcout
 
 
 def order_status(username, current_user):
