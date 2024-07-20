@@ -449,25 +449,15 @@ def modify_request(username, current_user):
     elif modify_selection == "b":
         # FIXME: need to fix the remove item
         c_order_to_be_remove_itemlist = c_all_order_list[int(order_num_selection) - 1]
-        for i in range(
-            len(c_all_order_list[c_order_index_notpaid[int(order_num_selection) - 1]])
-        ):
-            print(
-                f"{i+1}.{c_all_order_list[c_order_index_notpaid[int(order_num_selection) - 1]][i][0]}"
-            )
+        for i in range(len(c_order_to_be_remove_itemlist)):
+            print(f"{i+1}.{c_order_to_be_remove_itemlist[i][0]}")
         remove_selection = input(
             "Enter the item you want to remove (Enter 0 to exit): "
         )
         while remove_selection != "0":
             while not (
                 remove_selection.isdigit()
-                and 1
-                <= int(remove_selection)
-                <= len(
-                    c_all_order_list[
-                        c_order_index_notpaid[int(order_num_selection) - 1]
-                    ]
-                )
+                and 1 <= int(remove_selection) <= len(c_order_to_be_remove_itemlist)
             ):
                 print("Invalid selection!")
                 remove_selection = input(
@@ -481,16 +471,9 @@ def modify_request(username, current_user):
                 c_order_index_notpaid[int(order_num_selection) - 1]
             ]
             print("Item removed!")
-            for i in range(
-                len(
-                    c_all_order_list[
-                        c_order_index_notpaid[int(order_num_selection) - 1]
-                    ]
-                )
-            ):
-                print(
-                    f"{i+1}.{c_all_order_list[c_order_index_notpaid[int(order_num_selection) - 1]][i][0]}"
-                )
+
+            for i in range(len(c_order_to_be_remove_itemlist)):
+                print(f"{i+1}.{c_order_to_be_remove_itemlist[i][0]}")
             remove_selection = input(
                 "Enter the item you want to remove (Enter 0 to exit): "
             )
