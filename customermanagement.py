@@ -1,10 +1,41 @@
 from order_pages import page1, page2, page3
 from inventory import load_data
 import datetime as dt
+
 # Do finish basic function before do change username/password function
 # FIXME: need to make customer able to see what are currently on service
 # TODO:report
 # TODO:modify request
+# FIXME: when writing to the orders.txt, the index in falty, could be the file problem, so delete it and do it again, or maybe the checking index problem
+# variable :
+# c_all_order_list = all c list
+# c_order_index_in_current_user_notpaid = the index of the item that is not paid, only count in 1 user, not include other user
+# order_index_all = the index of the order, including other user
+# current_user = all info of current user
+# order_num_selection = the order number that user want to modify
+# modify_selection = the selection of the user to add or remove item
+# old_and_new_order_list_combined = the list of the old and new order combined
+# item_name = the item name that user want to request service
+# selection = the selection of the user
+# checkout = the selection of the user to checkout
+# payment = the selection of the user to pay now, pay later or cancel
+# total = the total price of the order
+# status_list = the list of the status of the order
+# time_list = the list of the time of the order
+# username = the username of the current user
+# current_order_list = the list of the current order list
+# current_page_product = the list of the current page product
+# current_page = the current page
+# len_shown_product = the length of the shown product
+# all_product = the list of all product
+# selection = the selection of the user
+# order = the order of the user
+# order_username = the username of the order
+# time = the time of the order
+# list_data = the list of the data
+# data = the data of the file
+# index = the index of the order
+# status = the status of the order
 
 
 def customer_menu(current_user):
@@ -138,24 +169,24 @@ def order_product(current_page, current_user):
                                 "!!!Order successful!. Please pay as soon as possible in order to proceed!!!"
                             )
                             f.write("\n")
-                        break
+                        return customer_menu(current_user=current_user)
                     elif payment == "3":
                         print("----------Order cancelled----------")
                         current_order_list = []
                         pass
                 elif checkout == "n":
                     print("----------Order cancelled----------")
-                    break
+                    return customer_menu(current_user=current_user)
                 else:
                     print("------------Invalid selection!------------")
-                    pass
+                    return customer_menu(current_user=current_user)
         else:
             print("Invalid selection!")
     return customer_menu(current_user=current_user)
 
 
 def service_repair(username):
-    all_ordered_item_list = []
+    c_all_order_list = []
     status_list = []
     time_list = []
     with open("orders.txt", "r") as f:
@@ -168,20 +199,20 @@ def service_repair(username):
             if order_username == username:
                 status_list.append(status)
                 time_list.append(time)
-                all_ordered_item_list.append(order)
+                c_all_order_list.append(order)
     print("-----------------------------------")
     print("Select order: ")
-    if len(all_ordered_item_list) == 0:
+    if len(c_all_order_list) == 0:
         print("No order found!")
         return customer_menu(current_user=username)
     else:
-        for i in range(len(all_ordered_item_list)):
+        for i in range(len(c_all_order_list)):
             if status_list[i] == "paid":
                 print(f"{i+1}.{status_list[i]} - {time_list[i]}")
         print("b. Back")
     selection = input("Enter the order number: ")
     while (
-        not (selection.isdigit() and 1 <= int(selection) <= len(all_ordered_item_list))
+        not (selection.isdigit() and 1 <= int(selection) <= len(c_all_order_list))
         and selection != "b"
     ):
         print("Invalid selection!")
@@ -192,27 +223,27 @@ def service_repair(username):
     print("-----------------------------------")
     print("Order details: ")
     """
-    get one whole order = all_ordered_item_list[int(selection) - 1
-    get the order item = all_ordered_item_list[int(selection) - 1][i][0]
-    get the order item with price = all_ordered_item_list[int(selection) - 1][i]
-    get the order price = all_ordered_item_list[int(selection) - 1][i][1]
+    get one whole order = c_all_order_list[int(selection) - 1
+    get the order item = c_all_order_list[int(selection) - 1][i][0]
+    get the order item with price = c_all_order_list[int(selection) - 1][i]
+    get the order price = c_all_order_list[int(selection) - 1][i][1]
     """
     # show all order item
-    for i in range(len(all_ordered_item_list[int(selection) - 1])):
-        print(f"{i+1}.{all_ordered_item_list[int(selection) - 1][i][0]}")
+    for i in range(len(c_all_order_list[int(selection) - 1])):
+        print(f"{i+1}.{c_all_order_list[int(selection) - 1][i][0]}")
     request_service_selection = input("Enter the item you want to request service: ")
     while not (
         request_service_selection.isdigit()
         and 1
         <= int(request_service_selection)
-        <= len(all_ordered_item_list[int(selection) - 1])
+        <= len(c_all_order_list[int(selection) - 1])
     ):
         print("Invalid selection!")
         request_service_selection = input(
             "Enter the item you want to request service: "
         )
     # get the item name according to the request_service_selection
-    item_name = all_ordered_item_list[int(selection) - 1][
+    item_name = c_all_order_list[int(selection) - 1][
         int(request_service_selection) - 1
     ][0]
     with open("service_repair.txt", "a") as f:
@@ -224,69 +255,72 @@ def service_repair(username):
 
 def modify_request(username, current_user):
     # get all item
-    all_ordered_item_list = []
+    c_all_order_list = []
     status_list = []
     time_list = []
     old_and_new_order_list_combined = []
-    currentuser_order_number_list = []
-    counter = -1
+    order_index_all = []
     with open("orders.txt", "r") as f:
         data = f.readlines()
+        index = -1
         for order in data:
-            counter += 1
             list_data = order.split("/")
             order_username, status, time, order = list_data
             # convert the order string to list
+            index += 1
             order = eval(order)
             if order_username == username:
                 status_list.append(status)
                 time_list.append(time)
-                all_ordered_item_list.append(order)
-                # only use this to know the numbering of the order in the order_list.txt
-                currentuser_order_number_list.append(counter)
+                c_all_order_list.append(order)
+                order_index_all.append(index)
 
     print("-----------------------------------")
     print("Select the order you want to modify")
     print("-----------------------------------")
-    if len(all_ordered_item_list) == 0:
+    if len(c_all_order_list) == 0:
         print("No order found!")
         return customer_menu(current_user=username)
     else:
-        for i in range(len(all_ordered_item_list)):
-            real_item_number_list = []
+        c_order_index_notpaid = []
+        counter = 1
+        for i in range(len(c_all_order_list)):
             if status_list[i] == "notpaid":
-                counter = 1
                 print(f"{counter}.{status_list[i]} - {time_list[i]}")
                 counter += 1
-                real_item_number_list.append(i)
+                c_order_index_notpaid.append(i)
         print("b. Back")
-    selection = input("Enter the order number: ")
+    order_num_selection = input("Enter the order number: ")
     while (
-        not (selection.isdigit() and 1 <= int(selection) <= len(real_item_number_list))
-        and selection != "b"
+        not (order_num_selection.isdigit() and 1 <= int(order_num_selection) <= counter)
+        and order_num_selection != "b"
     ):
         print("Invalid selection!")
-        selection = input("Enter the order number: ")
+        order_num_selection = input("Enter the order number: ")
 
-    if selection == "b":
+    if order_num_selection == "b":
         return customer_menu(current_user=username)
     print("-----------------------------------")
     print("Order details: ")
+
     for i in range(
-        len(all_ordered_item_list[real_item_number_list[int(selection) - 1]])
+        len(c_all_order_list[c_order_index_notpaid[int(order_num_selection) - 1]])
     ):
         print(
-            f"{i+1}.{all_ordered_item_list[real_item_number_list[int(selection) - 1]][i][0]}"
+            f"{i+1}.{c_all_order_list[c_order_index_notpaid[int(order_num_selection) - 1]][i][0]}"
         )
         old_and_new_order_list_combined.append(
-            all_ordered_item_list[real_item_number_list[int(selection) - 1]][i]
+            c_all_order_list[c_order_index_notpaid[int(order_num_selection) - 1]][i]
         )
 
-    print("1. Add item")
-    print("2. Remove item")
+    print("a. Add item")
+    print("b. Remove item")
     modify_selection = input("Enter your selection: ")
-    if modify_selection == "1":
-        # review this part
+    while modify_selection not in ["a", "b"]:
+        print("Invalid selection!")
+        modify_selection = input("Enter your selection: ")
+
+    if modify_selection == "a":
         current_page = 1
         current_page_product = []
         all_product = load_data()[0]
@@ -335,22 +369,149 @@ def modify_request(username, current_user):
             elif selection == "c":
                 print("Checking out...")
                 print("Order list: ")
-
+                counter = 1
                 for i in old_and_new_order_list_combined:
-                    counter = 1
                     print(f"{counter}. {i[0]} - {i[1]}")
                     counter += 1
-                # TODO: enable order to be cancel
-                # TODO: when adding new item, it never append to the "old" list
-                # TODO: overwrite the old item data after checkcout
+                checkout = input("Confirm order? (y/n): ")
+                while True:
+                    if checkout == "y":
+                        # calculate total order price
+                        total = 0
+                        for item in old_and_new_order_list_combined:
+                            total += int(item[1])
+
+                        print("===================================")
+                        print("              Payment              ")
+                        print("===================================")
+                        print("Total price: ", total)
+                        print("1. Pay Now")
+                        print("2. Pay Later")
+                        print("3. Cancel")
+                        # remove the old order from the list and also the text file
+                        order_to_delete = order_index_all[
+                            c_order_index_notpaid[int(order_num_selection) - 1]
+                        ]
+
+                        payment = input("Enter your selection: ")
+                        if payment == "1":
+                            with open("orders.txt", "r+") as f:
+                                data = f.readlines()
+                                toWrite = []
+                                for order in data:
+                                    list_data = order.split("/")
+                                    toWrite.append(list_data)
+                                toWrite.pop(order_to_delete)
+                                f.seek(0)
+                                f.truncate()
+                                for item in toWrite:
+                                    f.write("/".join(item))
+                            print("------------Payment successful!-----------")
+                            with open("orders.txt", "a") as f:
+                                f.write(
+                                    f"{username}/paid/{dt.datetime.now()}/{old_and_new_order_list_combined}"
+                                )
+                                f.write("\n")
+                                print("Order placed!")
+                                old_and_new_order_list_combined = []
+                            return customer_menu(current_user=current_user)
+                        elif payment == "2":
+                            with open("orders.txt", "r+") as f:
+                                data = f.readlines()
+                                toWrite = []
+                                for order in data:
+                                    list_data = order.split("/")
+                                    toWrite.append(list_data)
+                                toWrite.pop(order_to_delete)
+                                f.seek(0)
+                                f.truncate()
+                                for item in toWrite:
+                                    f.write("/".join(item))
+                            print("Pay later")
+                            with open("orders.txt", "r+") as f:
+                                f.write(
+                                    f"{username}/notpaid/{dt.datetime.now()}/{old_and_new_order_list_combined}"
+                                )
+                                print(
+                                    "!!!Order successful!. Please pay as soon as possible in order to proceed!!!"
+                                )
+                                f.write("\n")
+                            return customer_menu(current_user=current_user)
+                        elif payment == "3":
+                            print("----------Order cancelled----------")
+                            old_and_new_order_list_combined = []
+                            return customer_menu(current_user=current_user)
+                    elif checkout == "n":
+                        print("----------Order cancelled----------")
+                        return customer_menu(current_user=current_user)
+                    else:
+                        print("------------Invalid selection!------------")
+    elif modify_selection == "b":
+        # FIXME: need to fix the remove item
+        c_order_to_be_remove_itemlist = c_all_order_list[int(order_num_selection) - 1]
+        for i in range(len(c_order_to_be_remove_itemlist)):
+            print(f"{i+1}.{c_order_to_be_remove_itemlist[i][0]}")
+        remove_selection = input(
+            "Enter the item you want to remove (Enter 0 to exit): "
+        )
+        while remove_selection != "0":
+            while not (
+                remove_selection.isdigit()
+                and 1 <= int(remove_selection) <= len(c_order_to_be_remove_itemlist)
+            ):
+                print("Invalid selection!")
+                remove_selection = input(
+                    "Enter the item you want to remove (Enter 0 to exit): "
+                )
+
+            c_order_to_be_remove_itemlist.pop(int(remove_selection) - 1)
+            print(c_order_to_be_remove_itemlist)
+            # remove the old order from the list and also the text file
+            order_to_delete = order_index_all[
+                c_order_index_notpaid[int(order_num_selection) - 1]
+            ]
+            print("Item removed!")
+
+            for i in range(len(c_order_to_be_remove_itemlist)):
+                print(f"{i+1}.{c_order_to_be_remove_itemlist[i][0]}")
+            remove_selection = input(
+                "Enter the item you want to remove (Enter 0 to exit): "
+            )
+        # write the new order to the file
+        with open("orders.txt", "r+") as f:
+            data = f.readlines()
+            toWrite = []
+            for order in data:
+                list_data = order.split("/")
+                toWrite.append(list_data)
+            toWrite.pop(order_to_delete)
+            f.seek(0)
+            f.truncate()
+            for item in toWrite:
+                f.write("/".join(item))
+        with open("orders.txt", "a") as f:
+            print("Appending")
+            f.write(
+                f"{username}/notpaid/{dt.datetime.now()}/{c_order_to_be_remove_itemlist}"
+            )
+            f.write("\n")
+            print("Order updated!")
+        return customer_menu(current_user=current_user)
+
+    else:
+        print("Invalid selection!")
+    pass
+    # TODO: enable order to be cancel
+    # TODO: when adding new item, it never append to the "old" list
+    # TODO: overwrite the old item data after checkcout
 
 
 def order_status(username, current_user):
     """check for the user all order and their status
-    all_ordered_item_list = [item,price]
+    c_all_order_list = [item,price]
 
     """
-    all_ordered_item_list = []
+    c_all_order_list = []
     status_list = []
     time_list = []
     with open("orders.txt", "r") as f:
@@ -363,19 +524,19 @@ def order_status(username, current_user):
             if order_username == username:
                 status_list.append(status)
                 time_list.append(time)
-                all_ordered_item_list.append(order)
+                c_all_order_list.append(order)
     print("-----------------------------------")
     print("Select the order you want to check: ")
-    if len(all_ordered_item_list) == 0:
+    if len(c_all_order_list) == 0:
         print("No order found!")
         return customer_menu(current_user=username)
     else:
-        for i in range(len(all_ordered_item_list)):
+        for i in range(len(c_all_order_list)):
             print(f"{i+1}.{status_list[i]} - {time_list[i]}")
         print("b. Back")
     selection = input("Enter the order number: ")
     while (
-        not (selection.isdigit() and 1 <= int(selection) <= len(all_ordered_item_list))
+        not (selection.isdigit() and 1 <= int(selection) <= len(c_all_order_list))
         and selection != "b"
     ):
         print("Invalid selection!")
@@ -386,18 +547,18 @@ def order_status(username, current_user):
         print("-----------------------------------")
         print("Order details: ")
     """
-    get the order = all_ordered_item_list[int(selection) - 1
-    get the order item = all_ordered_item_list[int(selection) - 1][i][0]
-    get the order price = all_ordered_item_list[int(selection) - 1][i][1]
+    get the order = c_all_order_list[int(selection) - 1
+    get the order item = c_all_order_list[int(selection) - 1][i][0]
+    get the order price = c_all_order_list[int(selection) - 1][i][1]
     """
     total = 0
     # show all order item and price
     print("-----------------------------------")
-    for i in range(len(all_ordered_item_list[int(selection) - 1])):
+    for i in range(len(c_all_order_list[int(selection) - 1])):
         print(
-            f"{i+1}.{all_ordered_item_list[int(selection) - 1][i][0]} - {all_ordered_item_list[int(selection) - 1][i][1]}"
+            f"{i+1}.{c_all_order_list[int(selection) - 1][i][0]} - {c_all_order_list[int(selection) - 1][i][1]}"
         )
-        total += int(all_ordered_item_list[int(selection) - 1][i][1])
+        total += int(c_all_order_list[int(selection) - 1][i][1])
     print(f"Total price: {total}")
     if status_list[int(selection) - 1] == "notpaid":
         print("Payment not made yet!")
