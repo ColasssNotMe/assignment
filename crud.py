@@ -64,6 +64,9 @@ def register_user(user_data_list, user_type: str):
                 "id": id_number,
                 "username": new_username,
                 "password": new_password,
+                "name": name,
+                "phone_number": phone_number,
+                "address": address,
                 "status": "pending",
                 "type": "customer",
             }
