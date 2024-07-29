@@ -1,7 +1,7 @@
 from order_pages import page1, page2, page3
 from inventory import load_data
 import datetime as dt
-
+from User_Management import Write_Inquiry_of_User_system_usage as log_user_activity
 # Do finish basic function before do change username/password function
 # FIXME: need to make customer able to see what are currently on service
 # TODO:report
@@ -58,14 +58,42 @@ def customer_menu(current_user):
         selection = int(input("Enter your selection: "))
     if selection == 1:
         order_product(current_page=1, current_user=current_user)
+        log_user_activity(
+            current_user["username"],
+            "customer",
+            "order_product",
+        )
     elif selection == 2:
-        service_repair(username=current_user["username"])
+        service_repair(username=current_user["username"], current_user=current_user)
+        log_user_activity(
+            current_user["username"],
+            "customer",
+            "service_repair",
+        )
+
     elif selection == 3:
         modify_request(username=current_user["username"], current_user=current_user)
+        log_user_activity(
+            current_user["username"],
+            "customer",
+            "modify_request",
+        )
+
     elif selection == 4:
         order_status(username=current_user["username"], current_user=current_user)
+        log_user_activity(
+            current_user["username"],
+            "customer",
+            "order_status",
+        )
+
     elif selection == 5:
         reports(username=current_user["username"])
+        log_user_activity(
+            current_user["username"],
+            "customer",
+            "reports",
+        )
 
 
 def order_product(current_page, current_user, current_order_list=None):
@@ -85,8 +113,7 @@ def order_product(current_page, current_user, current_order_list=None):
     current_page_product = []
     username = current_user["username"]
     simplified_current_order_list = []
-    # TODO:delete this
-    print(current_order_list)
+
     # init orders.txt
     with open("orders.txt", "a") as f:
         pass
@@ -118,6 +145,7 @@ def order_product(current_page, current_user, current_order_list=None):
         # check for shown product len to prevent index error
         if selection.isdigit() and int(selection) <= len_shown_product:
             print("Adding product")
+            print(current_page_product[int(selection) - 1])
             current_order_list.append(current_page_product[int(selection) - 1])
 
         elif selection in ["p1", "p2", "p3"]:
@@ -205,7 +233,7 @@ def order_product(current_page, current_user, current_order_list=None):
     return customer_menu(current_user=current_user)
 
 
-def service_repair(username):
+def service_repair(current_user, username):
     c_order_list = []
     with open("orders.txt", "r") as f:
         data = f.readlines()
@@ -217,7 +245,7 @@ def service_repair(username):
     print("Select order: ")
     if len(c_order_list) == 0:
         print("No order found!")
-        return customer_menu(current_user=username)
+        return customer_menu(current_user=current_user)
     else:
         paid_order_list = []
         counter = 1
@@ -236,14 +264,14 @@ def service_repair(username):
         selection = input("Enter the order number: ")
 
     if selection == "b":
-        return customer_menu(current_user=username)
+        return customer_menu(current_user=current_user)
 
     print("-----------------------------------")
     print("Order details: ")
     # show all order item
     counter = 1
-    for i in paid_order_list:
-        print(f"{counter}.{paid_order_list["order"]}")
+    for i in range(len(paid_order_list[int(selection) - 1]["order"])):
+        print(f"{counter}.{paid_order_list[int(selection) - 1]["order"][i][0]}")
         counter += 1
     request_service_selection = input("Enter the item you want to request service: ")
     while not (
@@ -471,5 +499,46 @@ def order_status(username, current_user):
             return order_status(username=username)
 
 
-def reports():
-    pass
+def reports(username):
+    all_order = []
+    with open("order.txt", "r") as f:
+        data = f.readlines()
+        for order in data:
+            order = eval(order)
+            if order["username"] == username:
+                all_order.append(order)
+    print("-----------------------------------")
+    print("--------------Reports--------------")
+    print("-----------------------------------")
+    print("1. Order history")
+    print("2. Service history")
+    print("3. Back")
+    selection = input("Enter your selection: ")
+    while selection not in ["1", "2", "3"]:
+        print("Invalid selection!")
+        selection = input("Enter your selection: ")
+    if selection == "1":
+        print("Order history: ")
+        counter = 1
+        for order in all_order:
+            print(f"{counter}.{order}")
+            counter += 1
+        print("b. Back")
+        selection = input("Enter your selection: ")
+        while not (
+            selection.isdigit()
+            and 1 <= int(selection) <= len(all_order)
+            or selection == "b"
+        ):
+            print("Invalid selection!")
+            selection = input("Enter your selection: ")
+        if selection == "b":
+            return reports(username=username)
+    elif selection == "2":
+        print("Service history: ")
+        with open("service_repair.txt", "r") as f:
+            data = f.readlines()
+            counter = 1
+            record = eval(data)
+            for record in data:
+                pass
