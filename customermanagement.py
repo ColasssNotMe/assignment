@@ -68,7 +68,7 @@ def customer_menu(current_user):
         reports(username=current_user["username"])
 
 
-def order_product(current_page, current_user):
+def order_product(current_page, current_user, current_order_list=None):
     """_summary_
 
     Args:
@@ -78,10 +78,15 @@ def order_product(current_page, current_user):
     Returns:
         function: customer_menu
     """
-    current_order_list = []
+    if current_order_list is None:
+        current_order_list = []
+    else:
+        current_order_list = current_order_list
     current_page_product = []
     username = current_user["username"]
     simplified_current_order_list = []
+    # TODO:delete this
+    print(current_order_list)
     # init orders.txt
     with open("orders.txt", "a") as f:
         pass
@@ -150,7 +155,6 @@ def order_product(current_page, current_user):
                     print("3. Cancel")
                     payment = input("Enter your selection: ")
                     time_now = str(dt.datetime.now())
-                    print(time_now)
                     if payment == "1":
                         print("------------Payment successful!-----------")
                         with open("orders.txt", "a") as f:
@@ -316,7 +320,11 @@ def modify_request(username, current_user):
 
     if modify_selection == "a":
         while True:
-            return order_product(current_page=1, current_user=current_user)
+            return order_product(
+                current_page=1,
+                current_user=current_user,
+                current_order_list=old_and_new_order_list_combined,
+            )
     elif modify_selection == "b":
         print("!!!!!!!!!Warning!!!!!!!!!")
         # FIXME: havent change to dict
