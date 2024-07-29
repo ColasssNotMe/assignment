@@ -3,40 +3,19 @@
 # TODO: check for every possible selection error
 
 # havent done: inventory, super user, admin
-# customer management part still left with things related to order
 
 
-# notepad data sequence:
-# id
-# username
-# password
-# status
-
-
-# TODO:check for register data if ==null
+# TODO:check for register data if == None
 
 # Super customer username: 101,password: 101
-from crud import register_user
+from crud import register_user, load_data
 from customermanagement import customer_menu
 from usermanagement import superuser_menu, admin_menu
 
 
 def main():
-    user_data_list = []
+    user_data_list = load_data()
     # read the file if it exists, otherwise create it
-    with open("users.txt", "a+") as f:
-        # add superuser to the file if it is empty
-        f.seek(0)
-        data = f.readlines()
-        if len(data) > 0:
-            for record in data:
-                recordList = record.split(",")
-                user_data_list.append(recordList)
-        else:
-            user_data_list = [
-                ["101", "101", "101", "approved", "superuser", "\n"],
-                ["1", "1", "1", "approved", "customer", "\n"],
-            ]
     with open("products.txt", "a") as f:
         f.close()
     with open("orders.txt", "a") as f:
@@ -95,23 +74,23 @@ def login(user_data_list):
             continue
         login_successful = False
         for user in user_data_list:
-            if username == user[1] and password == user[2]:
-                if user[3] == "approved":
+            if username == user["username"] and password == user["password"]:
+                if user["status"] == "approved":
                     print("===================================")
                     print("Login successful")
                     print("===================================\n\n\n")
                     login_successful = True
-                    if user[4] == "superuser":
+                    if user["type"] == "superuser":
                         superuser_menu(user_data_list=user_data_list)
-                    elif user[4] == "admin":
+                    elif user["type"] == "admin":
                         admin_menu()
                     # TODO: for customer, straight away pass user data to customer_menu to make process easier
-                    elif user[4] == "customer":
+                    elif user["type"] == "customer":
                         customer_menu(current_user=user)
                     # return user so that dont need to loop the list again and again
                     return user
 
-                elif user[3] == "pending":
+                elif user["status"] == "pending":
                     print("===================================")
                     print("Your account is still not approved yet")
                     print("===================================")
