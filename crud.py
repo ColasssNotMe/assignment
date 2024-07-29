@@ -93,10 +93,6 @@ def register_user(user_data_list, user_type: str):
 
     # clear the file
     with open("users.txt", "w") as f:
-        pass
-        f.close()
-    # add data to the file
-    with open("users.txt", "a") as f:
         # dump data into text file
         for record in user_data_list:
             f.write(str(record), "\n")
