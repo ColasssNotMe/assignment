@@ -1,4 +1,4 @@
-def Write_Inquiry_of_User_system_usage(username, user_type, function):
+def write_user_usage(username, user_type, function):
     from datetime import datetime
 
     now = datetime.now()
