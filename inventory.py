@@ -1,9 +1,6 @@
-# use products.txt to store product data
-# use orders.txt to store customer order data
-# Define the file to store data
-# if using this file, do "from inventory_system import menu"
-# make a "inventory" option from admin / superuser menu
-## no global variable
+from User_Management import write_user_usage
+
+
 def initialize_data():
     try:
         with open("INVENTORY_DATA.TXT", "x") as f:
@@ -22,8 +19,9 @@ def save_data(inventory, purchase_orders):
         for order_id, order_details in purchase_orders.items():
             item_name = order_details["item_name"]
             quantity = order_details["quantity"]
+            price = order_details["price"]
             status = order_details["status"]
-            f.write(f"{order_id}: {item_name}, {quantity}, {status}\n")
+            f.write(f"{order_id}: {item_name}, {quantity}, {price}, {status}\n")
 
 
 def load_data():
@@ -43,10 +41,11 @@ def load_data():
                 inventory[item] = int(quantity)
             elif line and section == "purchase_orders":
                 order_id, details = line.split(": ")
-                item_name, quantity, status = details.split(", ")
+                item_name, quantity, price, status = details.split(", ")
                 purchase_orders[order_id] = {
                     "item_name": item_name,
                     "quantity": int(quantity),
+                    "price": price,
                     "status": status,
                 }
     return inventory, purchase_orders
@@ -74,12 +73,13 @@ def adjust_stock(item_name, quantity):
         print("Item not found in inventory.")
 
 
-def create_purchase_order(order_id, item_name, quantity):
+def create_purchase_order(order_id, item_name, quantity, price):
     inventory, purchase_orders = load_data()
     if item_name in inventory:
         purchase_orders[order_id] = {
             "item_name": item_name,
             "quantity": quantity,
+            "price": price,
             "status": "in process",
         }
         save_data(inventory, purchase_orders)
@@ -87,13 +87,17 @@ def create_purchase_order(order_id, item_name, quantity):
         print("Item not found in inventory.")
 
 
-def modify_purchase_order(order_id, new_item_name=None, new_quantity=None):
+def modify_purchase_order(
+    order_id, new_item_name=None, new_quantity=None, new_status=None
+):
     inventory, purchase_orders = load_data()
     if order_id in purchase_orders:
         if new_item_name:
             purchase_orders[order_id]["item_name"] = new_item_name
         if new_quantity is not None:
             purchase_orders[order_id]["quantity"] = new_quantity
+        if order_id in purchase_orders:
+            purchase_orders[order_id]["status"] = new_status
         save_data(inventory, purchase_orders)
     else:
         print("Order ID not found.")
@@ -122,11 +126,12 @@ def generate_report():
     for order_id, order_details in purchase_orders.items():
         item_name = order_details["item_name"]
         quantity = order_details["quantity"]
+        price = order_details["price"]
         status = order_details["status"]
-        print(f"{order_id}: {item_name}, {quantity}, {status}")
+        print(f"{order_id}: {item_name}, {quantity}, {price}, {status}")
 
 
-def menu():
+def menu(current_user):
     initialize_data()
     while True:
         print("\nInventory Management System")
@@ -145,18 +150,32 @@ def menu():
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             add_or_update_inventory(item_name, quantity)
+            write_user_usage(
+                current_user["username"],
+                current_user["type"],
+                "add_or_update_inventory",
+            )
         elif choice == "2":
             item_name = input("Enter item name: ")
             print(f"Stock for {item_name}: {check_stock(item_name)}")
+            write_user_usage(
+                current_user["username"], current_user["type"], "check_stock"
+            )
         elif choice == "3":
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity adjustment (positive or negative): "))
             adjust_stock(item_name, quantity)
+            write_user_usage(
+                current_user["username"], current_user["type"], "adjust_stock"
+            )
         elif choice == "4":
             order_id = input("Enter order ID: ")
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             create_purchase_order(order_id, item_name, quantity)
+            write_user_usage(
+                current_user["username"], current_user["type"], "create_purchase_order"
+            )
         elif choice == "5":
             order_id = input("Enter order ID: ")
             new_item_name = input(
@@ -169,14 +188,26 @@ def menu():
             modify_purchase_order(
                 order_id, new_item_name if new_item_name else None, new_quantity
             )
+            write_user_usage(
+                current_user["username"], current_user["type"], "modify_purchase_order"
+            )
         elif choice == "6":
             order_id = input("Enter order ID: ")
             cancel_purchase_order(order_id)
+            write_user_usage(
+                current_user["username"], current_user["type"], "cancel_purchase_order"
+            )
         elif choice == "7":
             order_id = input("Enter order ID: ")
             print(f"Status for order ID {order_id}: {get_order_status(order_id)}")
+            write_user_usage(
+                current_user["username"], current_user["type"], "get_order_status"
+            )
         elif choice == "8":
             generate_report()
+            write_user_usage(
+                current_user["username"], current_user["type"], "inventory_report"
+            )
         elif choice == "9":
             break
         else:

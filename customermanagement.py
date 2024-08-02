@@ -289,7 +289,7 @@ def service_repair(current_user, username):
         f.write(str({"username": username, "time": time_now, "item": item_name}))
         f.write("\n")
         print("Service request sent!")
-        return service_repair(username=username)
+        return service_repair(username=username, current_user=current_user)
 
 
 def modify_request(username, current_user):
@@ -422,18 +422,11 @@ def order_status(username, current_user):
 
     """
     c_order_list = []
-    status_list = []
-    time_list = []
     with open("orders.txt", "r") as f:
         data = f.readlines()
         for order in data:
-            list_data = order.split("/")
-            order_username, status, time, order = list_data
-            # convert the order string to list
             order = eval(order)
-            if order_username == username:
-                status_list.append(status)
-                time_list.append(time)
+            if order["username"] == username:
                 c_order_list.append(order)
     print("-----------------------------------")
     print("Select the order you want to check: ")
@@ -442,7 +435,7 @@ def order_status(username, current_user):
         return customer_menu(current_user=current_user)
     else:
         for i in range(len(c_order_list)):
-            print(f"{i+1}.{status_list[i]} - {time_list[i]}")
+            print(f"{i+1}.{c_order_list[i]["status"]} - {c_order_list[i]["time"]}")
         print("b. Back")
     selection = input("Enter the order number: ")
     while (
@@ -451,26 +444,22 @@ def order_status(username, current_user):
     ):
         print("Invalid selection!")
         selection = input("Enter the order number: ")
+    selected_order = c_order_list[int(selection) - 1]
 
     if selection == "b":
         return customer_menu(current_user=current_user)
         print("-----------------------------------")
         print("Order details: ")
-    """
-    get the order = c_order_list[int(selection) - 1
-    get the order item = c_order_list[int(selection) - 1][i][0]
-    get the order price = c_order_list[int(selection) - 1][i][1]
-    """
     total = 0
     # show all order item and price
     print("-----------------------------------")
-    for i in range(len(c_order_list[int(selection) - 1])):
+    for i in range(len(selected_order["order"])):
         print(
-            f"{i+1}.{c_order_list[int(selection) - 1][i][0]} - {c_order_list[int(selection) - 1][i][1]}"
+            f"{i+1}.{selected_order["order"][i][0]} - {selected_order["order"][i][1]}"
         )
-        total += int(c_order_list[int(selection) - 1][i][1])
+        total += int(selected_order["order"][i][1])
     print(f"Total price: {total}")
-    if status_list[int(selection) - 1] == "notpaid":
+    if selected_order["status"] == "notpaid":
         print("Payment not made yet!")
         print("1. Pay now")
         print("2. Modify order")
@@ -478,7 +467,23 @@ def order_status(username, current_user):
         selection = input("Enter your selection: ")
         if selection == "1":
             print("Payment successful!")
-            status_list[int(selection) - 1] = "paid"
+            # update the status in the file
+            updated_data = []
+            with open("orders.txt", "r+") as f:
+                data = f.readlines()
+                for record in data:
+                    record = eval(record)
+                    if (
+                        record["username"] == username
+                        and record["time"] == selected_order["time"]
+                    ):
+                        record["status"] = "paid"
+                    updated_data.append(record)
+            print(updated_data)
+            with open("orders.txt", "w") as f:
+                for record in updated_data:
+                    f.write(str(record))
+                    f.write("\n")
             return customer_menu(current_user=current_user)
 
         elif selection == "2":
@@ -494,7 +499,7 @@ def order_status(username, current_user):
             print("Invalid selection!")
             selection = input("Enter your selection: ")
         else:
-            return order_status(username=username)
+            return order_status(username=username, current_user=current_user)
 
 
 def reports(username, current_user):

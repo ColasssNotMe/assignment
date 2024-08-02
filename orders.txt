@@ -1,5 +1,4 @@
 {'username': '1', 'status': 'paid', 'time': '2024-07-27 18:42:58.629084', 'order': [['item1', 1], ['item1', 1], ['item2', 6]]}
 {'username': '1', 'status': 'paid', 'time': '2024-07-29 09:13:51.433173', 'order': [['item1', 1], ['item2', 6]]}
 {'username': '1', 'status': 'paid', 'time': '2024-07-29 09:19:20.016813', 'order': [['item1', 1], ['item2', 6]]}
-{'username': '1', 'status': 'notpaid', 'time': '2024-07-29 09:20:53.604374', 'order': [['item1', 1], ['item1', 1], ['item2', 6]]}
-{'username': '1', 'status': 'notpaid', 'time': '2024-07-29 11:06:28.175928', 'order': [['item1', 1], ['item1', 1], ['item2', 6], ['item1', 1], ['item2', 6]]}
+{'username': '1', 'status': 'paid', 'time': '2024-07-29 09:20:53.604374', 'order': [['item1', 1], ['item1', 1], ['item2', 6]]}

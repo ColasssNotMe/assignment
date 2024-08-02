@@ -1,16 +1,14 @@
-# TODO: DO NOT COMMIT FILE YET, DO PSEUDOCODE
-# TODO: login when password false, it just break
 # TODO: check for every possible selection error
-
-# havent done: inventory, super user, admin
-
-
 # TODO:check for register data if == None
+
+# ref: usertype : superuser, admin, staff, customer
+
 
 # Super customer username: 101,password: 101
 from crud import register_user, load_data
 from customermanagement import customer_menu
 from usermanagement import superuser_menu, admin_menu
+from inventory import menu as inventory_menu
 
 
 def main():
@@ -53,11 +51,14 @@ def register(user_data_list):
     print("===================================")
     print("1. Customer")
     print("2. Admin")
+    print("3. Inventory Staff")
     selection = int(input("Enter your choice: "))
     if selection == 1:
         register_user(user_data_list=user_data_list, user_type="customer")
     elif selection == 2:
         register_user(user_data_list=user_data_list, user_type="admin")
+    elif selection == 3:
+        register_user(user_data_list=user_data_list, user_type="staff")
 
 
 def login(user_data_list):
@@ -84,11 +85,11 @@ def login(user_data_list):
                         superuser_menu(user_data_list=user_data_list)
                     elif user["type"] == "admin":
                         admin_menu()
-                    # TODO: for customer, straight away pass user data to customer_menu to make process easier
+                    # passing current user data to the function
                     elif user["type"] == "customer":
                         customer_menu(current_user=user)
-                    # return user so that dont need to loop the list again and again
-                    return user
+                    elif user["type"] == "staff":
+                        inventory_menu(current_user=user)
 
                 elif user["status"] == "pending":
                     print("===================================")
