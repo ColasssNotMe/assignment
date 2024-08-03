@@ -1,3 +1,4 @@
 Inventory:
-desktop: 5: 10
+desktop: 8: 5
+test: 4: 5
 Purchase Orders:

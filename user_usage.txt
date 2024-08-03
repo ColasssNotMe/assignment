@@ -1,1 +1,1 @@
-2024-08-03 10:09:36,1,staff,check_stock,
+2024-08-03 10:33:01,1,staff,adjust_stock,
