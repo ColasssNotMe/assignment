@@ -7,40 +7,11 @@ from User_Management import write_user_usage as log_user_activity
 # TODO:report
 # TODO:modify request
 # FIXME: when writing to the orders.txt, the index in falty, could be the file problem, so delete it and do it again, or maybe the checking index problem
-# variable :
-# c_order_list = all c list
-# c_order_index_in_current_user_notpaid = the index of the item that is not paid, only count in 1 user, not include other user
-# order_index_all = the index of the order, including other user
-# current_user = all info of current user
-# order_num_selection = the order number that user want to modify
-# modify_selection = the selection of the user to add or remove item
-# old_and_new_order_list_combined = the list of the old and new order combined
-# item_name = the item name that user want to request service
-# selection = the selection of the user
-# checkout = the selection of the user to checkout
-# payment = the selection of the user to pay now, pay later or cancel
-# total = the total price of the order
-# status_list = the list of the status of the order
-# time_list = the list of the time of the order
-# username = the username of the current user
-# current_order_list = the list of the current order list
-# current_page_product = the list of the current page product
-# current_page = the current page
-# len_shown_product = the length of the shown product
-# all_product = the list of all product
-# selection = the selection of the user
-# order = the order of the user
-# order_username = the username of the order
-# time = the time of the order
-# list_data = the list of the data
-# data = the data of the file
-# index = the index of the order
-# status = the status of the order
 
 
 def customer_menu(current_user):
-    """_summary_
-
+    """
+    customer main menu
     Args:
         current_user (list): info about current login user
     """
@@ -97,12 +68,11 @@ def customer_menu(current_user):
 
 
 def order_product(current_page, current_user, current_order_list=None):
-    """_summary_
-
+    """
+    order product function
     Args:
         current_page (int): get the current page
         current_user (list): current user list
-
     Returns:
         function: customer_menu
     """
@@ -118,7 +88,7 @@ def order_product(current_page, current_user, current_order_list=None):
     with open("orders.txt", "a") as f:
         pass
 
-    all_product = load_data()[0]
+    all_product = load_data()[2]
 
     while True:
         print("===================================")
@@ -141,7 +111,6 @@ def order_product(current_page, current_user, current_order_list=None):
                 len_shown_product, current_page_product = page2(inventory=all_product)
 
         selection = input("Enter the product name you want to order: ")
-
         # check for shown product len to prevent index error
         if selection.isdigit() and int(selection) <= len_shown_product:
             print("Adding product")

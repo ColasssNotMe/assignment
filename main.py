@@ -91,7 +91,11 @@ def login(user_data_list):
                     elif user["type"] == "staff":
                         inventory_menu(current_user=user)
 
-                elif user["status"] == "pending":
+                elif (
+                    user["status"] == "pending"
+                    or user["status"] == "rejected"
+                    or user["status"] == "disabled"
+                ):
                     print("===================================")
                     print("Your account is still not approved yet")
                     print("===================================")

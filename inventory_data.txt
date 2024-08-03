@@ -1,5 +1,3 @@
 Inventory:
-item1: 1
-item2: 6
+desktop: 5: 10
 Purchase Orders:
-24: item, 3, in process
