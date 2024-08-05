@@ -5,7 +5,6 @@ from User_Management import write_user_usage as log_user_activity
 # Do finish basic function before do change username/password function
 # FIXME: need to make customer able to see what are currently on service
 # TODO:report
-# TODO:modify request
 # FIXME: when writing to the orders.txt, the index in falty, could be the file problem, so delete it and do it again, or maybe the checking index problem
 
 
@@ -246,6 +245,7 @@ def service_repair(current_user, username):
             print(f"{counter}.{current_paid_order["order"][i][0]}")
             counter += 1
         print("c. Continue")
+        print("b. Back")
         request_service_selection = input(
             "Enter the item you want to request service: "
         )
@@ -257,13 +257,18 @@ def service_repair(current_user, username):
                 <= len(current_paid_order["order"])
             )
             or request_service_selection == "c"
+            or request_service_selection == "b"
         ):
             print("Invalid selection!")
             request_service_selection = input(
                 "Enter the item you want to request service: "
             )
         # get the item name according to the request_service_selection
-        if request_service_selection != "c":
+        if request_service_selection == "c":
+            break
+        elif request_service_selection == "b":
+            return customer_menu(current_user=current_user)
+        else:
             item_name = current_paid_order["order"][int(request_service_selection) - 1][
                 0
             ]
@@ -272,8 +277,6 @@ def service_repair(current_user, username):
                 time_now = str(dt.datetime.now())
             else:
                 print("Item already in the list!")
-        else:
-            break
     with open("service_repair.txt", "a") as f:
         f.write(str({"username": username, "time": time_now, "item": item_list}))
         f.write("\n")
@@ -328,6 +331,7 @@ def modify_request(username, current_user):
     counter = 1
     for item in c_order_to_deal_with["order"]:
         print(f"{counter}.{item[0]} - {item[1]}")
+        counter += 1
         old_and_new_order_list_combined = c_order_to_deal_with["order"]
     print("a. Add item")
     print("b. Remove item")
@@ -347,56 +351,67 @@ def modify_request(username, current_user):
             )
     elif modify_selection == "b":
         print("!!!!!!!!!Warning!!!!!!!!!")
+        counter = 1
         for item in c_order_to_deal_with["order"]:
             print(f"{counter}.{item[0]} - {item[1]}")
+            counter += 1
             old_and_new_order_list_combined = c_order_to_deal_with["order"]
         remove_selection = input(
-            "Enter the item you want to remove (Enter 0 to exit): "
+            'Enter the item you want to remove (Enter "b" to exit): '
         )
-        while remove_selection != "0":
+        while remove_selection != "b":
             while not (
                 remove_selection.isdigit()
                 and 1 <= int(remove_selection) <= len(c_order_to_deal_with["order"])
             ):
                 print("Invalid selection!")
                 remove_selection = input(
-                    "Enter the item you want to remove (Enter 0 to exit): "
+                    'Enter the item you want to remove (Enter "b" to exit): '
                 )
-
             c_order_to_deal_with["order"].pop(int(remove_selection) - 1)
             # remove the old order from the list and also the text file
             print("Item removed!")
+            counter = 1
             for item in c_order_to_deal_with["order"]:
                 print(f"{counter}.{item[0]} - {item[1]}")
+                counter += 1
                 old_and_new_order_list_combined = c_order_to_deal_with["order"]
             if len(old_and_new_order_list_combined) == 0:
                 print("Order empty!")
                 return customer_menu(current_user=current_user)
             remove_selection = input(
-                "Enter the item you want to remove (Enter 0 to exit): "
+                'Enter the item you want to remove (Enter "b" to exit): '
             )
-        # write the new order to the file
-        with open("orders.txt", "r+") as f:
-            data = f.readlines()
-            # remove the old order from the list and also the text file
-            evaluated = eval(data)
-            if (
-                evaluated["username"] == c_order_to_deal_with["username"]
-                and evaluated["time"] == c_order_to_deal_with["time"]
-            ):
-                f.write(
-                    str(
-                        {
-                            "username": username,
-                            "status": "notpaid",
-                            "time": str(dt.datetime.now()),
-                            "order": old_and_new_order_list_combined,
-                        }
-                    )
-                )
-                f.write("\n")
-                print("Order updated!")
-                return customer_menu(current_user=current_user)
+
+        if remove_selection == "b":
+            # write the new order to the file
+            with open("orders.txt", "r+") as f:
+                updated_data = []
+                data = f.readlines()
+                # remove the old order from the list and also the text file
+                for record in data:
+                    evaluated = eval(record)
+                    if (
+                        evaluated["username"] == c_order_to_deal_with["username"]
+                        and evaluated["time"] == c_order_to_deal_with["time"]
+                    ):
+                        updated_data.append(
+                            {
+                                "username": username,
+                                "status": "notpaid",
+                                "time": str(dt.datetime.now()),
+                                "order": old_and_new_order_list_combined,
+                            }
+                        )
+                    else:
+                        updated_data.append(evaluated)
+                        print("Item removed!")
+            with open("orders.txt", "w") as f:
+                for record in updated_data:
+                    f.write(str(record))
+                    f.write("\n")
+            return customer_menu(current_user=current_user)
+
     elif modify_selection == "c":
         # TODO: add in pseudocode
         with open("orders.txt", "r") as f:
@@ -559,7 +574,7 @@ def reports(username, current_user):
                 print("Invalid selection!")
                 selection = input("Enter your selection: ")
             else:
-                return reports(username=username)
+                return reports(username=username, current_user=current_user)
     elif selection == "2":
         all_order = []
         print("-----------------------------------")
@@ -579,7 +594,7 @@ def reports(username, current_user):
                 print("Invalid selection!")
                 selection = input("Enter your selection: ")
             if selection == "b":
-                return reports(username=username)
+                return reports(username=username, current_user=current_user)
             else:
                 print("-----------------------------------")
                 print("Service details: ")
@@ -592,7 +607,7 @@ def reports(username, current_user):
                             record["username"] == username
                             and record["time"] == all_order[int(selection) - 1]["time"]
                         ):
-                            print(f"{counter}.{record['item']}")
+                            print(f"{counter}.{record['item'][counter-1]}")
                             counter += 1
                 print("b. Back")
                 selection = input("Enter your selection: ")
