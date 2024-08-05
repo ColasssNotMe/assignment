@@ -1,3 +1,3 @@
 {'id': '101', 'username': '101', 'password': '101', 'name': 'Super User', 'phone_number': '010', 'address': 'address', 'status': 'approved', 'type': 'superuser'}
 {'id': '1', 'username': '1', 'password': '1', 'status': 'approved', 'type': 'customer'}
-{'id': '123123123123', 'username': '21', 'password': '23', 'name': 'etuo', 'phone_number': '1231231231', 'address': 'uouo', 'status': 'pending', 'type': 'customer'}
+{'id': '123123123123', 'username': '21', 'password': '23', 'name': 'etuo', 'phone_number': '1231231231', 'address': 'uouo', 'status': 'approved', 'type': 'customer'}

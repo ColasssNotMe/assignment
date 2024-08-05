@@ -362,34 +362,39 @@ def modify_request(username, current_user):
                 evaluated["username"] == c_order_to_deal_with["username"]
                 and evaluated["time"] == c_order_to_deal_with["time"]
             ):
-                with open("orders.txt", "a") as f:
-                    f.write(
-                        str(
-                            {
-                                "username": username,
-                                "status": "notpaid",
-                                "time": str(dt.datetime.now()),
-                                "order": old_and_new_order_list_combined,
-                            }
-                        )
+                f.write(
+                    str(
+                        {
+                            "username": username,
+                            "status": "notpaid",
+                            "time": str(dt.datetime.now()),
+                            "order": old_and_new_order_list_combined,
+                        }
                     )
-                    f.write("\n")
-                    print("Order updated!")
+                )
+                f.write("\n")
+                print("Order updated!")
                 return customer_menu(current_user=current_user)
-    elif remove_selection == "c":
+    elif modify_selection == "c":
         # TODO: add in pseudocode
-        with open("orders.txt", "r+") as f:
-            data = f.readlines()
-            for record in data:
+        with open("orders.txt", "r") as f:
+            lines = f.readlines()
+        with open("orders.txt", "w") as f:
+            for record in lines:
                 record = eval(record)
-                if record["username"] == c_order_to_deal_with["username"]:
-                    if record["time"] == c_order_to_deal_with["time"]:
-                        data.remove(str(record))
-    elif remove_selection == "d":
+                if (
+                    record["username"] == c_order_to_deal_with["username"]
+                    and record["time"] == c_order_to_deal_with["time"]
+                ):
+                    print("Order removed!")
+                    continue
+                f.write(str(record) + "\n")
+            f.flush()
+            return modify_request(username=username, current_user=current_user)
+    elif modify_selection == "d":
         return customer_menu(current_user=current_user)
     else:
         print("Invalid selection!")
-        # TODO: enable order to be cancel
 
 
 def order_status(username, current_user):
