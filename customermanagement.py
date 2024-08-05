@@ -234,30 +234,52 @@ def service_repair(current_user, username):
     if selection == "b":
         return customer_menu(current_user=current_user)
 
-    print("-----------------------------------")
-    print("Order details: ")
-    # show all order item
-    counter = 1
-    for i in range(len(paid_order_list[int(selection) - 1]["order"])):
-        print(f"{counter}.{paid_order_list[int(selection) - 1]["order"][i][0]}")
-        counter += 1
-    request_service_selection = input("Enter the item you want to request service: ")
-    while not (
-        request_service_selection.isdigit()
-        and 1 <= int(request_service_selection) <= len(paid_order_list)
-    ):
-        print("Invalid selection!")
+    request_service_selection = ""
+    item_list = []
+    while request_service_selection != "c":
+        print("-----------------------------------")
+        print("Order details: ")
+        # show all order item
+        counter = 1
+        current_paid_order = paid_order_list[int(selection) - 1]
+        for i in range(len(current_paid_order["order"])):
+            print(f"{counter}.{current_paid_order["order"][i][0]}")
+            counter += 1
+        print("c. Continue")
         request_service_selection = input(
             "Enter the item you want to request service: "
         )
-    # get the item name according to the request_service_selection
-    item_name = paid_order_list[int(request_service_selection) - 1]["order"]
-    time_now = str(dt.datetime.now())
+        while not (
+            (
+                request_service_selection.isdigit()
+                and 1
+                <= int(request_service_selection)
+                <= len(current_paid_order["order"])
+            )
+            or request_service_selection == "c"
+        ):
+            print("Invalid selection!")
+            request_service_selection = input(
+                "Enter the item you want to request service: "
+            )
+        # get the item name according to the request_service_selection
+        if request_service_selection != "c":
+            item_name = current_paid_order["order"][int(request_service_selection) - 1][
+                0
+            ]
+            if item_name not in item_list:
+                item_list.append(item_name)
+                time_now = str(dt.datetime.now())
+            else:
+                print("Item already in the list!")
+        else:
+            break
     with open("service_repair.txt", "a") as f:
-        f.write(str({"username": username, "time": time_now, "item": item_name}))
+        f.write(str({"username": username, "time": time_now, "item": item_list}))
         f.write("\n")
         print("Service request sent!")
         return service_repair(username=username, current_user=current_user)
+    f.flush()
 
 
 def modify_request(username, current_user):
@@ -387,6 +409,7 @@ def modify_request(username, current_user):
                     and record["time"] == c_order_to_deal_with["time"]
                 ):
                     print("Order removed!")
+                    print("Money will be refunded to your account in 3-5 working days")
                     continue
                 f.write(str(record) + "\n")
             f.flush()
@@ -425,12 +448,13 @@ def order_status(username, current_user):
     ):
         print("Invalid selection!")
         selection = input("Enter the order number: ")
-    selected_order = c_order_list[int(selection) - 1]
 
     if selection == "b":
         return customer_menu(current_user=current_user)
         print("-----------------------------------")
         print("Order details: ")
+    else:
+        selected_order = c_order_list[int(selection) - 1]
     total = 0
     # show all order item and price
     print("-----------------------------------")
@@ -518,7 +542,7 @@ def reports(username, current_user):
             print("Invalid selection!")
             selection = input("Enter your selection: ")
         if selection == "b":
-            return reports(username=username)
+            return reports(username=username, current_user=current_user)
         else:
             print("-----------------------------------")
             print("Order details: ")
@@ -560,15 +584,22 @@ def reports(username, current_user):
                 print("-----------------------------------")
                 print("Service details: ")
                 counter = 1
-                for record in all_order[int(selection) - 1]["item"]:
-                    print(f"{counter}.{record[0]}")
-                    counter += 1
+                with open("service_repair.txt", "r") as f:
+                    data = f.readlines()
+                    for record in data:
+                        record = eval(record)
+                        if (
+                            record["username"] == username
+                            and record["time"] == all_order[int(selection) - 1]["time"]
+                        ):
+                            print(f"{counter}.{record['item']}")
+                            counter += 1
                 print("b. Back")
                 selection = input("Enter your selection: ")
                 while selection != "b":
                     print("Invalid selection!")
                     selection = input("Enter your selection: ")
                 else:
-                    return reports(username=username)
+                    return reports(username=username, current_user=current_user)
     elif selection == "3":
         return customer_menu(current_user=current_user)
