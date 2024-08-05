@@ -6,10 +6,10 @@ def register_user(user_data_list, user_type: str):
         new_username = input("Enter your username: ")
     with open("users.txt", "r") as f:
         data = f.readlines()
-        for record in data:
-            users = eval(record)
+        for user in data:
+            user = eval(user)
             while True:
-                if users["username"] == new_username:
+                if user["username"] == new_username:
                     print("Username already exists!")
                     new_username = input("Enter your username: ")
                 else:
@@ -95,7 +95,7 @@ def register_user(user_data_list, user_type: str):
     with open("users.txt", "w") as f:
         # dump data into text file
         for record in user_data_list:
-            f.write(str(record), "\n")
+            f.write(str(record) + "\n")
 
 
 # for delete,update, assign userdatalist to the function: user_data_list = delete_user(user_data_list, username)

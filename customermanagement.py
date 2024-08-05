@@ -114,7 +114,6 @@ def order_product(current_page, current_user, current_order_list=None):
         # check for shown product len to prevent index error
         if selection.isdigit() and int(selection) <= len_shown_product:
             print("Adding product")
-            print(current_page_product[int(selection) - 1])
             current_order_list.append(current_page_product[int(selection) - 1])
 
         elif selection in ["p1", "p2", "p3"]:
@@ -310,8 +309,10 @@ def modify_request(username, current_user):
         old_and_new_order_list_combined = c_order_to_deal_with["order"]
     print("a. Add item")
     print("b. Remove item")
+    print("c. Remove order")
+    print("d. Back")
     modify_selection = input("Enter your selection: ")
-    while modify_selection not in ["a", "b"]:
+    while modify_selection not in ["a", "b", "c", "d"]:
         print("Invalid selection!")
         modify_selection = input("Enter your selection: ")
 
@@ -324,7 +325,6 @@ def modify_request(username, current_user):
             )
     elif modify_selection == "b":
         print("!!!!!!!!!Warning!!!!!!!!!")
-        # FIXME: havent change to dict
         for item in c_order_to_deal_with["order"]:
             print(f"{counter}.{item[0]} - {item[1]}")
             old_and_new_order_list_combined = c_order_to_deal_with["order"]
@@ -343,7 +343,6 @@ def modify_request(username, current_user):
 
             c_order_to_deal_with["order"].pop(int(remove_selection) - 1)
             # remove the old order from the list and also the text file
-
             print("Item removed!")
             for item in c_order_to_deal_with["order"]:
                 print(f"{counter}.{item[0]} - {item[1]}")
@@ -355,7 +354,6 @@ def modify_request(username, current_user):
                 "Enter the item you want to remove (Enter 0 to exit): "
             )
         # write the new order to the file
-
         with open("orders.txt", "r+") as f:
             data = f.readlines()
             # remove the old order from the list and also the text file
@@ -378,11 +376,20 @@ def modify_request(username, current_user):
                     f.write("\n")
                     print("Order updated!")
                 return customer_menu(current_user=current_user)
-
-            else:
-                print("Invalid selection!")
-            pass
-            # TODO: enable order to be cancel
+    elif remove_selection == "c":
+        # TODO: add in pseudocode
+        with open("orders.txt", "r+") as f:
+            data = f.readlines()
+            for record in data:
+                record = eval(record)
+                if record["username"] == c_order_to_deal_with["username"]:
+                    if record["time"] == c_order_to_deal_with["time"]:
+                        data.remove(str(record))
+    elif remove_selection == "d":
+        return customer_menu(current_user=current_user)
+    else:
+        print("Invalid selection!")
+        # TODO: enable order to be cancel
 
 
 def order_status(username, current_user):
