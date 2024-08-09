@@ -176,7 +176,7 @@ def order_product(current_page, current_user, current_order_list=None):
                     print("2. Pay Later")
                     print("3. Cancel")
                     payment = input("Enter your selection: ")
-                    time_now = str(dt.datetime.now())
+                    time_now = str(dt.datetime.now().replace(microsecond=0))
                     if payment == "1":
                         print("------------Payment successful!-----------")
                         # update the number of product in the inventory
@@ -316,7 +316,7 @@ def service_repair(current_user, username):
             ]
             if item_name not in item_list:
                 item_list.append(item_name)
-                time_now = str(dt.datetime.now())
+                time_now = str(dt.datetime.now().replace(microsecond=0))
             else:
                 print("Item already in the list!")
     with open("service_repair.txt", "a") as f:
@@ -441,7 +441,7 @@ def modify_request(username, current_user):
                             {
                                 "username": username,
                                 "status": "notpaid",
-                                "time": str(dt.datetime.now()),
+                                "time": str(dt.datetime.now().replace(microsecond=0)),
                                 "order": old_and_new_order_list_combined,
                             }
                         )
