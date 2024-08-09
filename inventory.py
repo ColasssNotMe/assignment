@@ -1,4 +1,5 @@
 from User_Management import write_user_usage
+# inventory data : item_name: quantity: price
 
 
 def initialize_data():

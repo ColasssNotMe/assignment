@@ -1,5 +1,5 @@
 from order_pages import page1, page2, page3
-from inventory import load_data
+from inventory import load_data, add_or_update_inventory
 import datetime as dt
 from User_Management import write_user_usage as log_user_activity
 # Do finish basic function before do change username/password function
@@ -87,7 +87,17 @@ def order_product(current_page, current_user, current_order_list=None):
     with open("orders.txt", "a") as f:
         pass
 
+    high_stock_item_list = {}
+    check_stock = load_data()[0]
+    print(check_stock)
+    for key, value in check_stock.items():
+        if value != 0:
+            high_stock_item_list.update({key: value})
+    print(high_stock_item_list)
     all_product = load_data()[2]
+    for key, item in all_product.items():
+        if key not in high_stock_item_list:
+            all_product.pop(key)
 
     while True:
         print("===================================")
@@ -112,13 +122,29 @@ def order_product(current_page, current_user, current_order_list=None):
         selection = input("Enter the product name you want to order: ")
         # check for shown product len to prevent index error
         if selection.isdigit() and int(selection) <= len_shown_product:
-            print("Adding product")
-            current_order_list.append(current_page_product[int(selection) - 1])
+            # reduce the stock of the product
+            for itemname, number in high_stock_item_list.items():
+                if current_page_product[int(selection) - 1][0] == itemname:
+                    if number == 0:
+                        print("Product out of stock!")
+                        return order_product(
+                            current_page=current_page, current_user=current_user
+                        )
+                    else:
+                        print("Adding product")
+                        high_stock_item_list[itemname] -= 1
+                        current_order_list.append(
+                            current_page_product[int(selection) - 1]
+                        )
 
         elif selection in ["p1", "p2", "p3"]:
             order_product(current_page=int(selection[1]), current_user=current_user)
         elif selection == "b":
             print("Back to menu")
+            # revert back the total number of product ordered
+            for item in current_order_list:
+                if item[0] in high_stock_item_list:
+                    high_stock_item_list[item[0]] += 1
             customer_menu(current_user=current_user)
         elif selection == "c":
             print("Checking out...")
@@ -138,6 +164,7 @@ def order_product(current_page, current_user, current_order_list=None):
                 if checkout == "y":
                     # calculate total order price
                     total = 0
+                    # simplified_current_order_list = [item, price]
                     for item in simplified_current_order_list:
                         total += int(item[1])
 
@@ -152,6 +179,16 @@ def order_product(current_page, current_user, current_order_list=None):
                     time_now = str(dt.datetime.now())
                     if payment == "1":
                         print("------------Payment successful!-----------")
+                        # update the number of product in the inventory
+                        for item in simplified_current_order_list:
+                            if item[0] in high_stock_item_list:
+                                price = all_product.get(item[0])
+                                quantity = high_stock_item_list.get(item[0])
+                                add_or_update_inventory(
+                                    item_name=item[0], quantity=quantity, price=price
+                                )
+
+                        # write the order to the file
                         with open("orders.txt", "a") as f:
                             f.write(
                                 str(
@@ -188,10 +225,15 @@ def order_product(current_page, current_user, current_order_list=None):
                     elif payment == "3":
                         print("----------Order cancelled----------")
                         current_order_list = []
+                        for item in current_order_list:
+                            if item[0] in high_stock_item_list:
+                                high_stock_item_list[item[0]] += 1
                         pass
                 elif checkout == "n":
                     print("----------Order cancelled----------")
-                    return customer_menu(current_user=current_user)
+                    for item in current_order_list:
+                        if item[0] in high_stock_item_list:
+                            high_stock_item_list[item[0]] += 1
                 else:
                     print("------------Invalid selection!------------")
                     checkout = input("Confirm order? (y/n): ")
