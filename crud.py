@@ -156,9 +156,7 @@ def load_data():
     return user_data_list
 
 def conv_to_list(data):
-    #FIXME: buggy
     data_list = []
-    
     if len(list(data)) ==1:
             listing = list(data["id"], data["username"], data["password"], data["status"], data["type"],data["name"],data["phone"], data["address"])
             data_list.append(listing)
