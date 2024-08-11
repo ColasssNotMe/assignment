@@ -174,8 +174,8 @@ def conv_to_dict(list):
         data_dict.append(dict)
     return data_dict
 
-def write_data(data):
-    with open("users.txt", "w") as f:
+def write_data(data, open_mode):
+    with open("users.txt", open_mode) as f:
         for record in data:
             f.write(str(record) + "\n")
     return data
