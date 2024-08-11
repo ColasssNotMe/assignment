@@ -9,6 +9,7 @@ from crud import register_user, load_data
 from customermanagement import customer_menu
 from usermanagement import superuser_menu, admin_menu
 from inventory import menu as inventory_menu
+from User_Management import user_mangement_menu_admin,user_mangement_menu_superuser
 
 
 def main():
@@ -81,10 +82,12 @@ def login(user_data_list):
                     print("Login successful")
                     print("===================================\n\n\n")
                     login_successful = True
+                    # change to list from dictionary
+                    listing = list(user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["email"], user["phone"])
                     if user["type"] == "superuser":
-                        superuser_menu(user_data_list=user_data_list)
+                        user_mangement_menu_superuser(current_user=listing  )
                     elif user["type"] == "admin":
-                        admin_menu()
+                        user_mangement_menu_admin(current_user=listing)
                     # passing current user data to the function
                     elif user["type"] == "customer":
                         customer_menu(current_user=user)
