@@ -2,3 +2,4 @@ Inventory:
 desktop: 6: 5
 test: 3: 5
 Purchase Orders:
+1: desktop, 23, 4, in process

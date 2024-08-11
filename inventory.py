@@ -176,7 +176,7 @@ def menu(current_user):
             )
 
         elif choice == "4":
-            order_id = input("Enter order ID: ")
+            order_id = input("Enter new order ID: ")
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = int(input("Enter price: "))
