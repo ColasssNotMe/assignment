@@ -83,9 +83,9 @@ def login(user_data_list):
                     print("===================================\n\n\n")
                     login_successful = True
                     # change to list from dictionary
-                    listing = list(user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["email"], user["phone"])
+                    listing = list(user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["email"])
                     if user["type"] == "superuser":
-                        user_mangement_menu_superuser(current_user=listing  )
+                        user_mangement_menu_superuser(current_user=listing)
                     elif user["type"] == "admin":
                         user_mangement_menu_admin(current_user=listing)
                     # passing current user data to the function

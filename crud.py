@@ -150,3 +150,32 @@ def load_data():
             ]
 
     return user_data_list
+
+def conv_to_list(data):
+    data_list = []
+    for record in data:
+        listing = list(user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["email"])
+        data_list.append(listing)
+    return data_list
+
+def conv_to_dict(list):
+    data_dict = []
+    for record in list:
+        dict = {
+            "id": record[0],
+            "username": record[1],
+            "password": record[2],
+            "status": record[3],
+            "type": record[4],
+            "name": record[5],
+            "email": record[7],
+            "phone": record[6],
+        }
+        data_dict.append(dict)
+    return data_dict
+
+def write_data(data):
+    with open("users.txt", "w") as f:
+        for record in data:
+            f.write(str(record) + "\n")
+    return data
