@@ -153,7 +153,6 @@ def menu(current_user):
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = int(input("Enter price: "))
-            add_or_update_inventory(item_name, quantity, price)
             write_user_usage(
                 current_user["username"],
                 current_user["type"],
@@ -180,6 +179,7 @@ def menu(current_user):
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = int(input("Enter price: "))
+            add_or_update_inventory(item_name, quantity, price)
             create_purchase_order(order_id, item_name, quantity, price)
             write_user_usage(
                 current_user["username"], current_user["type"], "create_purchase_order"
