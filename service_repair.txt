@@ -1,6 +1,0 @@
-{'username': '1', 'time': '2024-08-05 09:56:01.524022', 'item': ['item1', 'item1', 'item2']}
-{'username': '1', 'time': '2024-08-05 09:57:47.481252', 'item': ['item1', 'item2']}
-{'username': '1', 'time': '2024-08-05 09:57:39.690638', 'item': ['item1', 'item2']}
-{'username': '1', 'time': '2024-08-05 09:58:18.426070', 'item': ['item1', 'item2']}
-{'username': '1', 'time': '2024-08-05 09:58:14.372267', 'item': ['item1', 'item2']}
-{'username': '1', 'time': '2024-08-05 09:58:10.607502', 'item': ['item1', 'item2']}

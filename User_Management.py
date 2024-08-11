@@ -1,4 +1,5 @@
 #from inventory import menu
+from crud import conv_to_dict, conv_to_list,write_data, load_data
 
 def approve_user():
     print("===================================")
@@ -95,12 +96,11 @@ def verify_user_admin():
 
 def verify_user_superuser():
     #get data from users.txt
-    with open("users.txt", "r") as user_data:
-        data_list = user_data.readlines()
-        user_data_list=[]
-        for data in data_list:
-            user_data_list.append(data.split(","))
+    user_data_list=load_data()
     #add needed data to temp list
+    user_data_list=conv_to_list(user_data_list)
+    print(user_data_list)
+    
     temp_data_list=[]
     for length in range(len(user_data_list)):
         status= user_data_list[length][3]
@@ -404,5 +404,4 @@ def user_mangement_menu_admin(current_user):
         report()
         write_user_usage(current_user[1],current_user[4], "user_management_report")
 
-current_user=["00000000000000", "Ah Huat", "Huat AH", "approved", "admin", "Huat Ah Bing", "0123456789", "123456abc@gmail.com", "\n"]
-user_mangement_menu_admin(current_user)
+

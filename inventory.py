@@ -141,18 +141,20 @@ def menu(current_user):
         print("1. Add/Update Inventory Item")
         print("2. Check Stock")
         print("3. Adjust Stock")
-        print("4. Create Purchase Order")
-        print("5. Modify Purchase Order")
-        print("6. Cancel Purchase Order")
-        print("7. Get Purchase Order Status")
+        print("4. Create Stock Purchase Order")
+        print("5. Modify Stock Purchase Order")
+        print("6. Cancel Stock Purchase Order")
+        print("7. Get Stock Purchase Order Status")
         print("8. Generate Report")
         print("9. Exit")
+        print("0. Exit")
         choice = input("Enter your choice: ")
 
         if choice == "1":
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = int(input("Enter price: "))
+            add_or_update_inventory(item_name, quantity, price)
             write_user_usage(
                 current_user["username"],
                 current_user["type"],
@@ -179,7 +181,6 @@ def menu(current_user):
             item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = int(input("Enter price: "))
-            add_or_update_inventory(item_name, quantity, price)
             create_purchase_order(order_id, item_name, quantity, price)
             write_user_usage(
                 current_user["username"], current_user["type"], "create_purchase_order"
@@ -220,8 +221,10 @@ def menu(current_user):
             write_user_usage(
                 current_user["username"], current_user["type"], "inventory_report"
             )
-
         elif choice == "9":
+            pass
+
+        elif choice == "0":
             break
         else:
             print("Invalid choice, please try again.")

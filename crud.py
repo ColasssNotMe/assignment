@@ -39,17 +39,17 @@ def register_user(user_data_list, user_type: str):
     while name is None:
         print("Please enter your name!")
         name = input("Enter your name: ")
-    phone_number = input("Enter your phone number: ")
+    phone = input("Enter your phone number: ")
     while True:
-        if phone_number is None:
+        if phone is None:
             print("Phone number cannot be empty!")
-            phone_number = input("Enter your phone number: ")
-        elif phone_number.isdigit() is False:
+            phone = input("Enter your phone number: ")
+        elif phone.isdigit() is False:
             print("Phone number must only contain number!")
-            phone_number = input("Enter your phone number: ")
-        elif len(phone_number) != 10:
+            phone = input("Enter your phone number: ")
+        elif len(phone) != 10:
             print("Phone number must be 10 digit!")
-            phone_number = input("Enter your phone number: ")
+            phone = input("Enter your phone number: ")
         else:
             break
     address = input("Enter your address: ")
@@ -65,7 +65,7 @@ def register_user(user_data_list, user_type: str):
                 "username": new_username,
                 "password": new_password,
                 "name": name,
-                "phone_number": phone_number,
+                "phone": phone,
                 "address": address,
                 "status": "pending",
                 "type": "customer",
@@ -81,7 +81,7 @@ def register_user(user_data_list, user_type: str):
                 "username": new_username,
                 "password": new_password,
                 "name": name,
-                "phone_number": phone_number,
+                "phone": phone,
                 "address": address,
                 "status": "pending",
                 "type": "admin",
@@ -135,7 +135,7 @@ def load_data():
                     "username": "101",
                     "password": "101",
                     "name": "Super User",
-                    "phone_number": "010",
+                    "phone": "010",
                     "address": "address",
                     "status": "approved",
                     "type": "superuser",
@@ -144,18 +144,28 @@ def load_data():
                     "id": "1",
                     "username": "1",
                     "password": "1",
+                    "name": "Staff",
+                    "phone": "010",
+                    "address": "address",
                     "status": "approved",
-                    "type": "customer",
+                    "type": "staff",
+
                 },
             ]
 
     return user_data_list
 
 def conv_to_list(data):
+    #FIXME: buggy
     data_list = []
-    for record in data:
-        listing = list(user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["email"])
-        data_list.append(listing)
+    
+    if len(list(data)) ==1:
+            listing = list(data["id"], data["username"], data["password"], data["status"], data["type"],data["name"],data["phone"], data["address"])
+            data_list.append(listing)
+    else:
+        for user in data:
+                listing = list((user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["address"]))
+                data_list.append(listing)
     return data_list
 
 def conv_to_dict(list):
@@ -168,7 +178,7 @@ def conv_to_dict(list):
             "status": record[3],
             "type": record[4],
             "name": record[5],
-            "email": record[7],
+            "address": record[7],
             "phone": record[6],
         }
         data_dict.append(dict)
@@ -179,3 +189,5 @@ def write_data(data, open_mode):
         for record in data:
             f.write(str(record) + "\n")
     return data
+
+

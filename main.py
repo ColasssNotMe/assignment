@@ -13,12 +13,14 @@ from User_Management import user_mangement_menu_admin,user_mangement_menu_superu
 
 
 def main():
-    user_data_list = load_data()
     # read the file if it exists, otherwise create it
+    with open("users.txt", "a") as f:
+        pass
     with open("products.txt", "a") as f:
-        f.close()
+        pass
     with open("orders.txt", "a") as f:
-        f.close()
+        pass
+    user_data_list = load_data()
     first_screen(user_data_list=user_data_list)
 
 
@@ -83,7 +85,7 @@ def login(user_data_list):
                     print("===================================\n\n\n")
                     login_successful = True
                     # change to list from dictionary
-                    listing = list(user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["email"])
+                    listing = list([user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["address"]])
                     if user["type"] == "superuser":
                         user_mangement_menu_superuser(current_user=listing)
                     elif user["type"] == "admin":

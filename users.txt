@@ -1,0 +1,3 @@
+{'id': '101', 'username': '101', 'password': '101', 'name': 'Super User', 'phone': '010', 'address': 'address', 'status': 'approved', 'type': 'superuser'}
+{'id': '1', 'username': '1', 'password': '1', 'name': 'Staff', 'phone': '010', 'address': 'address', 'status': 'approved', 'type': 'staff'}
+{'id': '123123123123', 'username': 'test', 'password': 'pass', 'name': 'name', 'phone': '1231231231', 'address': 'e', 'status': 'pending', 'type': 'customer'}
