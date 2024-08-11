@@ -1,5 +1,6 @@
 Inventory:
 desktop: 6: 5
 test: 3: 5
+kd;k: 23: 42
 Purchase Orders:
 1: desktop, 23, 4, in process
