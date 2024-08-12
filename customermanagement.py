@@ -3,9 +3,8 @@ from inventory import load_data, add_or_update_inventory
 import datetime as dt
 from User_Management import write_user_usage as log_user_activity
 # Do finish basic function before do change username/password function
-# FIXME: need to make customer able to see what are currently on service
-# TODO:report
-# FIXME: when writing to the orders.txt, the index in falty, could be the file problem, so delete it and do it again, or maybe the checking index problem
+# TODO: need to make customer able to see what are currently on service
+# TODO: add order id
 
 
 def customer_menu(current_user):
@@ -89,11 +88,9 @@ def order_product(current_page, current_user, current_order_list=None):
 
     high_stock_item_list = {}
     check_stock = load_data()[0]
-    print(check_stock)
     for key, value in check_stock.items():
         if value != 0:
             high_stock_item_list.update({key: value})
-    print(high_stock_item_list)
     all_product = load_data()[2]
     for key, item in all_product.items():
         if key not in high_stock_item_list:
@@ -187,16 +184,26 @@ def order_product(current_page, current_user, current_order_list=None):
                                 add_or_update_inventory(
                                     item_name=item[0], quantity=quantity, price=price
                                 )
+                        # get the latest order id
+                        latest_order_id = 0
+                        with open("orders.txt", "r") as f:
+                            data = f.readlines()
+                            for item in data:
+                                item = eval(item)
+                                if item["order_id"] > latest_order_id:
+                                    latest_order_id = item["order_id"] + 1
 
                         # write the order to the file
                         with open("orders.txt", "a") as f:
                             f.write(
                                 str(
                                     {
+                                        "order_id": latest_order_id,
                                         "username": username,
                                         "status": "paid",
                                         "time": time_now,
                                         "order": simplified_current_order_list,
+                                        "send_status": "pending",
                                     }
                                 )
                             )
@@ -210,10 +217,12 @@ def order_product(current_page, current_user, current_order_list=None):
                             f.write(
                                 str(
                                     {
+                                        "order_id": latest_order_id,
                                         "username": username,
                                         "status": "notpaid",
                                         "time": time_now,
                                         "order": simplified_current_order_list,
+                                        "send_status": "pending",
                                     }
                                 )
                             )
@@ -496,7 +505,7 @@ def order_status(username, current_user):
         return customer_menu(current_user=current_user)
     else:
         for i in range(len(c_order_list)):
-            print(f"{i+1}.{c_order_list[i]["status"]} - {c_order_list[i]["time"]}")
+            print(f"{i+1}.{c_order_list[i]["send_status"]} - {c_order_list[i]["time"]}")
         print("b. Back")
     selection = input("Enter the order number: ")
     while (

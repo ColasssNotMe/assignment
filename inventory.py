@@ -146,7 +146,7 @@ def menu(current_user):
         print("6. Cancel Stock Purchase Order")
         print("7. Get Stock Purchase Order Status")
         print("8. Generate Report")
-        print("9. Exit")
+        print("9. Change Customer Order Status")
         print("0. Exit")
         choice = input("Enter your choice: ")
 
@@ -222,7 +222,38 @@ def menu(current_user):
                 current_user["username"], current_user["type"], "inventory_report"
             )
         elif choice == "9":
-            pass
+            change_order_status_list = []
+            with open("orders.txt", "r") as f:
+                data = f.readlines()
+                for order in data:
+                    order = eval(order)
+                    # FIXME
+                    if order["send_status"] == "pending":
+                        print(f"{order["order_id"]}. {order["username"]}")
+            order_id = input("Enter order ID: ")
+            print("====================================")
+            print("1. Set order to received")
+            print("2. Set order to cancelled")
+            print("3. Set order to pending")
+            status_choice = input("Enter your choice: ")
+            while status_choice not in ["1", "2", "3"]:
+                print("Invalid choice, please try again.")
+                status_choice = input("Enter your choice: ")
+            with open("orders.txt", "r+") as f:
+                data = f.readlines()
+                for record in data:
+                    change_order_status_list.append(eval(record))
+                for item in change_order_status_list:
+                    if item["order_id"] == order_id:
+                        if order_id == "1":
+                            item["send_status"] = "received"
+                        if order_id == "2":
+                            item["send_status"] = "cancelled"
+                        if order_id == "3":
+                            item["send_status"] = "pending"
+            with open("orders.txt", "w") as f:
+                for item in change_order_status_list:
+                    f.write(str(item) + "\n")
 
         elif choice == "0":
             break
