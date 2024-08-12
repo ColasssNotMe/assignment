@@ -86,7 +86,9 @@ def order_product(current_page, current_user, current_order_list=None):
     with open("orders.txt", "a") as f:
         pass
 
+    # remove item that have 0 stock
     high_stock_item_list = {}
+    key_to_removed = []
     check_stock = load_data()[0]
     for key, value in check_stock.items():
         if value != 0:
@@ -94,7 +96,12 @@ def order_product(current_page, current_user, current_order_list=None):
     all_product = load_data()[2]
     for key, item in all_product.items():
         if key not in high_stock_item_list:
-            all_product.pop(key)
+            key_to_removed.append(key)
+    for key in key_to_removed:
+        all_product.pop(key)
+    if len(all_product) == 0:
+        print("No product available!")
+        return customer_menu(current_user=current_user)
 
     while True:
         print("===================================")
