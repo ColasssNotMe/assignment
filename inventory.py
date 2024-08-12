@@ -227,7 +227,6 @@ def menu(current_user):
                 data = f.readlines()
                 for order in data:
                     order = eval(order)
-                    # FIXME
                     if order["send_status"] == "pending":
                         print(f"{order["order_id"]}. {order["username"]}")
             order_id = input("Enter order ID: ")
