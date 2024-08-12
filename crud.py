@@ -187,20 +187,33 @@ def conv_to_list(data):
     return data_list
 
 
-def conv_to_dict(list):
+def conv_to_dict(data):
     data_dict = []
-    for record in list:
+    if len(list(data)) == 1:
         dict = {
-            "id": record[0],
-            "username": record[1],
-            "password": record[2],
-            "status": record[3],
-            "type": record[4],
-            "name": record[5],
-            "address": record[7],
-            "phone": record[6],
+            "id": data[0],
+            "username": data[1],
+            "password": data[2],
+            "status": data[3],
+            "type": data[4],
+            "name": data[5],
+            "address": data[7],
+            "phone": data[6],
         }
         data_dict.append(dict)
+    else:
+        for record in data:
+            dict = {
+                "id": record[0],
+                "username": record[1],
+                "password": record[2],
+                "status": record[3],
+                "type": record[4],
+                "name": record[5],
+                "address": record[7],
+                "phone": record[6],
+            }
+            data_dict.append(dict)
     return data_dict
 
 

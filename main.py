@@ -7,9 +7,8 @@
 # Super customer username: 101,password: 101
 from crud import register_user, load_data
 from customermanagement import customer_menu
-from usermanagement import superuser_menu, admin_menu
 from inventory import menu as inventory_menu
-from User_Management import user_mangement_menu_admin,user_mangement_menu_superuser
+from User_Management import user_mangement_menu_admin, user_mangement_menu_superuser
 
 
 def main():
@@ -85,7 +84,18 @@ def login(user_data_list):
                     print("===================================\n\n\n")
                     login_successful = True
                     # change to list from dictionary
-                    listing = list([user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["address"]])
+                    listing = list(
+                        [
+                            user["id"],
+                            user["username"],
+                            user["password"],
+                            user["status"],
+                            user["type"],
+                            user["name"],
+                            user["phone"],
+                            user["address"],
+                        ]
+                    )
                     if user["type"] == "superuser":
                         user_mangement_menu_superuser(current_user=listing)
                     elif user["type"] == "admin":
