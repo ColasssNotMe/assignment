@@ -115,8 +115,19 @@ def cancel_purchase_order(order_id):
 
 
 def get_order_status(order_id):
-    _, purchase_orders, _ = load_data()
-    return purchase_orders.get(order_id, {}).get("status", "Order ID not found.")
+    inventory, purchase_orders, _ = load_data()
+    set_status = int(input("Change status to: \n1.Shipped\n2.In Process\n"))
+    if set_status == 1:
+        if order_id in purchase_orders:
+            purchase_orders[order_id]["status"] = "Shipped"
+            item_name = purchase_orders[order_id]["item_name"]
+            add_or_update_inventory(
+                purchase_orders[order_id]["item_name"],
+                purchase_orders[order_id]["quantity"] + inventory[item_name],
+                purchase_orders[order_id]["price"],
+            )
+        cancel_purchase_order(order_id)
+    # return purchase_orders.get(order_id, {}).get("status", "Order ID not found.")
 
 
 def generate_report():
