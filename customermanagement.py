@@ -21,6 +21,7 @@ def customer_menu(current_user):
     print("3. Modify request")
     print("4. Order status")
     print("5. Reports")
+    print("6. Exit")
     selection = int(input("Enter your selection: "))
     while selection not in [1, 2, 3, 4, 5]:
         print("Invalid selection!")
@@ -63,6 +64,8 @@ def customer_menu(current_user):
             "customer",
             "customer_reports",
         )
+    elif selection == 6:
+        exit()
 
 
 def order_product(current_page, current_user, current_order_list=None):
