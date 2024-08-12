@@ -149,22 +149,43 @@ def load_data():
                     "address": "address",
                     "status": "approved",
                     "type": "staff",
-
                 },
             ]
 
     return user_data_list
 
+
 def conv_to_list(data):
     data_list = []
-    if len(list(data)) ==1:
-            listing = list(data["id"], data["username"], data["password"], data["status"], data["type"],data["name"],data["phone"], data["address"])
-            data_list.append(listing)
+    if len(list(data)) == 1:
+        listing = list(
+            data["id"],
+            data["username"],
+            data["password"],
+            data["status"],
+            data["type"],
+            data["name"],
+            data["phone"],
+            data["address"],
+        )
+        data_list.append(listing)
     else:
         for user in data:
-                listing = list((user["id"], user["username"], user["password"], user["status"], user["type"],user["name"],user["phone"], user["address"]))
-                data_list.append(listing)
+            listing = list(
+                (
+                    user["id"],
+                    user["username"],
+                    user["password"],
+                    user["status"],
+                    user["type"],
+                    user["name"],
+                    user["phone"],
+                    user["address"],
+                )
+            )
+            data_list.append(listing)
     return data_list
+
 
 def conv_to_dict(list):
     data_dict = []
@@ -182,10 +203,13 @@ def conv_to_dict(list):
         data_dict.append(dict)
     return data_dict
 
+
 def write_data(data, open_mode):
-    with open("users.txt", open_mode) as f:
-        for record in data:
-            f.write(str(record) + "\n")
+    if len(data) == 1:
+        with open("users.txt", open_mode) as f:
+            f.write(str(data) + "\n")
+    else:
+        with open("users.txt", open_mode) as f:
+            for record in data:
+                f.write(str(record) + "\n")
     return data
-
-
