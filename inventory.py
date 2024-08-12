@@ -234,32 +234,37 @@ def menu(current_user):
             )
         elif choice == "9":
             change_order_status_list = []
+            validation_list = []
             with open("orders.txt", "r") as f:
                 data = f.readlines()
                 for order in data:
                     order = eval(order)
                     if order["send_status"] == "pending":
+                        validation_list.append(order)
                         print(f"{order["order_id"]}. {order["username"]}")
             order_id = input("Enter order ID: ")
+            while not (0 <= int(order_id) <= len(validation_list)):
+                print("Invalid order ID, please try again.")
+                order_id = input("Enter order ID: ")
             print("====================================")
             print("1. Set order to received")
             print("2. Set order to cancelled")
             print("3. Set order to pending")
-            status_choice = input("Enter your choice: ")
-            while status_choice not in ["1", "2", "3"]:
+            status_choice = int(input("Enter your choice: "))
+            while status_choice not in [1, 2, 3]:
                 print("Invalid choice, please try again.")
-                status_choice = input("Enter your choice: ")
+                status_choice = int(input("Enter your choice: "))
             with open("orders.txt", "r+") as f:
                 data = f.readlines()
                 for record in data:
                     change_order_status_list.append(eval(record))
                 for item in change_order_status_list:
-                    if item["order_id"] == order_id:
-                        if order_id == "1":
+                    if item["order_id"] == int(order_id):
+                        if status_choice == 1:
                             item["send_status"] = "received"
-                        if order_id == "2":
+                        elif status_choice == 2:
                             item["send_status"] = "cancelled"
-                        if order_id == "3":
+                        elif status_choice == 3:
                             item["send_status"] = "pending"
             with open("orders.txt", "w") as f:
                 for item in change_order_status_list:
