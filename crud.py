@@ -1,7 +1,7 @@
 def register_user(user_data_list, user_type: str):
     new_username = input("Enter your username: ")
     # check for usename null
-    while new_username is None:
+    while new_username == "":
         print("Username cannot be empty!")
         new_username = input("Enter your username: ")
     with open("users.txt", "r") as f:
@@ -24,7 +24,7 @@ def register_user(user_data_list, user_type: str):
     id_number = input("Enter your IC/passport number: ")
     # check for null and only number
     while True:
-        if id_number is None:
+        if id_number == "":
             print("ID number cannot be empty!")
             id_number = input("Enter your ID number: ")
         elif id_number.isdigit() is False:
@@ -36,12 +36,12 @@ def register_user(user_data_list, user_type: str):
         else:
             break
     name = input("Enter your name: ")
-    while name is None:
+    while name == "":
         print("Please enter your name!")
         name = input("Enter your name: ")
     phone = input("Enter your phone number: ")
     while True:
-        if phone is None:
+        if phone == "":
             print("Phone number cannot be empty!")
             phone = input("Enter your phone number: ")
         elif phone.isdigit() is False:
@@ -53,7 +53,7 @@ def register_user(user_data_list, user_type: str):
         else:
             break
     address = input("Enter your address: ")
-    while address is None:
+    while address == "":
         print("Address cannot be empty!")
         address = input("Enter your address: ")
 
