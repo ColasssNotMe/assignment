@@ -279,7 +279,7 @@ def service_repair(current_user, username):
         counter = 1
         for i in c_order_list:
             if i["status"] == "paid":
-                print(f"{counter}.{i["status"]} - {i["time"]}")
+                print(f"{counter}.{i['status']} - {i['time']}")
                 paid_order_list.append(i)
                 counter += 1
         print("b. Back")
@@ -303,7 +303,7 @@ def service_repair(current_user, username):
         counter = 1
         current_paid_order = paid_order_list[int(selection) - 1]
         for i in range(len(current_paid_order["order"])):
-            print(f"{counter}.{current_paid_order["order"][i][0]}")
+            print(f"{counter}.{current_paid_order['order'][i][0]}")
             counter += 1
         print("c. Continue")
         print("b. Back")
@@ -363,7 +363,7 @@ def modify_request(username, current_user):
     counter = 1
     for i in c_order_list:
         if i["status"] == "notpaid":
-            print(f"{counter}.{i["status"]} - {i["time"]}")
+            print(f"{counter}.{i['status']} - {i['time']}")
             c_order_list_notpaid.append(i)
             counter += 1
 
@@ -515,7 +515,7 @@ def order_status(username, current_user):
         return customer_menu(current_user=current_user)
     else:
         for i in range(len(c_order_list)):
-            print(f"{i+1}.{c_order_list[i]["send_status"]} - {c_order_list[i]["time"]}")
+            print(f"{i+1}.{c_order_list[i]['send_status']} - {c_order_list[i]['time']}")
         print("b. Back")
     selection = input("Enter the order number: ")
     while (
@@ -536,7 +536,7 @@ def order_status(username, current_user):
     print("-----------------------------------")
     for i in range(len(selected_order["order"])):
         print(
-            f"{i+1}.{selected_order["order"][i][0]} - {selected_order["order"][i][1]}"
+            f"{i+1}.{selected_order['order'][i][0]} - {selected_order['order'][i][1]}"
         )
         total += int(selected_order["order"][i][1])
     print(f"Total price: {total}")
@@ -606,7 +606,7 @@ def reports(username, current_user):
         print("Order history: ")
         counter = 1
         for order in all_order:
-            print(f"{counter}.{order["time"]}")
+            print(f"{'counter'}.{order['time']}")
             counter += 1
         print("b. Back")
         selection = input("Enter your selection: ")
