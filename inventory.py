@@ -246,7 +246,7 @@ def menu(current_user):
                     order = eval(order)
                     if order["send_status"] == "pending":
                         validation_list.append(order)
-                        print(f"{order["order_id"]}. {order["username"]}")
+                        print(f"{order['order_id']}. {order['username']}")
             order_id = input("Enter order ID: ")
             while not (0 <= int(order_id) <= len(validation_list)):
                 print("Invalid order ID, please try again.")
