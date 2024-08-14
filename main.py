@@ -1,5 +1,5 @@
 # TODO: check for every possible selection error
-# TODO:check for register data if == None
+# TODO:check for register data if ==
 
 # ref: usertype : superuser, admin, staff, customer
 
