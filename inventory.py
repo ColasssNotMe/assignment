@@ -233,6 +233,11 @@ def menu(current_user):
                 current_user["username"], current_user["type"], "inventory_report"
             )
         elif choice == "9":
+            write_user_usage(
+                current_user["username"],
+                current_user["type"],
+                "change_customer_order_status",
+            )
             change_order_status_list = []
             validation_list = []
             with open("orders.txt", "r") as f:
