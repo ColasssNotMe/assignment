@@ -1,0 +1,372 @@
+#GAN ZHI MING 
+#TP075848
+
+from GAN_YEW_JUN_TP077400 import write_user_usage,inventory_order_status
+# inventory data : item_name: quantity: price
+
+
+def initialize_data():
+    try:
+        with open("INVENTORY_DATA.TXT", "x") as f:
+            f.write("Inventory:\n")
+            f.write("Purchase Orders:\n")
+    except FileExistsError:
+        pass
+
+
+def save_data(inventory, purchase_orders, prices):
+    with open("INVENTORY_DATA.txt", "w") as f:
+        f.write("Inventory:\n")
+        for item, quantity in inventory.items():
+            price = prices.get(item, 0)
+            f.write(f"{item}: {quantity}: {price}\n")
+        f.write("Purchase Orders:\n")
+        for order_id, order_details in purchase_orders.items():
+            item_name = order_details["item_name"]
+            quantity = order_details["quantity"]
+            price = order_details["price"]
+            status = order_details["status"]
+            f.write(f"{order_id}: {item_name}, {quantity}, {price}, {status}\n")
+
+
+def load_data():
+    inventory = {}
+    purchase_orders = {}
+    prices = {}
+    with open("INVENTORY_DATA.TXT", "r") as f:
+        lines = f.readlines()
+        section = None
+        for line in lines:
+            line = line.strip()
+            if line == "Inventory:":
+                section = "inventory"
+            elif line == "Purchase Orders:":
+                section = "purchase_orders"
+            elif line and section == "inventory":
+                item, quantity_price = line.split(": ", 1)
+                quantity, price = quantity_price.split(": ")
+                inventory[item.strip()] = int(quantity.strip())
+                prices[item.strip()] = int(price.strip())
+            elif line and section == "purchase_orders":
+                order_id, details = line.split(": ")
+                item_name, quantity, price, status = details.split(", ")
+                purchase_orders[order_id] = {
+                    "item_name": item_name,
+                    "quantity": int(quantity),
+                    "price": int(price),
+                    "status": status,
+                }
+    return inventory, purchase_orders, prices
+
+
+def add_or_update_inventory(item_name, quantity, price):
+    inventory, purchase_orders, prices = load_data()
+    inventory[item_name] = quantity
+    prices[item_name] = price
+    save_data(inventory, purchase_orders, prices)
+
+
+def check_stock(item_name):
+    inventory, _, _ = load_data()
+    return inventory.get(item_name, 0)
+
+
+def adjust_stock(item_name, quantity):
+    inventory, purchase_orders, prices = load_data()
+    if item_name in inventory:
+        inventory[item_name] += quantity
+        if inventory[item_name] < 0:
+            inventory[item_name] = 0
+        save_data(inventory, purchase_orders, prices)
+    else:
+        print("Item not found in inventory.")
+
+
+def create_purchase_order(order_id, item_name, quantity, price):
+    inventory, purchase_orders, prices = load_data()
+    purchase_orders[order_id] = {
+        "item_name": item_name,
+        "quantity": quantity,
+        "price": price,
+        "status": "in process",
+        }
+    save_data(inventory, purchase_orders, prices)
+
+
+
+def modify_purchase_order(order_id, new_item_name=None, new_quantity=None):
+    inventory, purchase_orders, prices = load_data()
+    if order_id in purchase_orders:
+        if new_item_name:
+            purchase_orders[order_id]["item_name"] = new_item_name
+        if new_quantity is not None:
+            purchase_orders[order_id]["quantity"] = new_quantity
+        save_data(inventory, purchase_orders, prices)
+    else:
+        print("Order ID not found.")
+
+
+def cancel_purchase_order(order_id):
+    inventory, purchase_orders, prices = load_data()
+    if order_id in purchase_orders:
+        del purchase_orders[order_id]
+        save_data(inventory, purchase_orders, prices)
+    else:
+        print("Order ID not found.")
+
+
+def get_order_status(order_id):
+    inventory, purchase_orders, _ = load_data()
+    set_status = input("Change status to: \n1.Shipped\n2.In Process\n")
+    if set_status == "1":
+        if order_id in purchase_orders:
+            purchase_orders[order_id]["status"] = "Shipped"
+            item_name = purchase_orders[order_id]["item_name"]
+            print(item_name)
+            add_or_update_inventory(
+                purchase_orders[order_id]["item_name"],
+                purchase_orders[order_id]["quantity"] + inventory.get(item_name,0),
+                purchase_orders[order_id]["price"],
+            )
+        cancel_purchase_order(order_id)
+    # return purchase_orders.get(order_id, {}).get("status", "Order ID not found.")
+
+
+def generate_report():
+    inventory, purchase_orders, prices = load_data()
+    print("Inventory:")
+    for item, quantity in inventory.items():
+        price = prices.get(item, 0)
+        print(f"{item}: {quantity} (Price: {price})")
+    print("\nPurchase Orders:")
+    for order_id, order_details in purchase_orders.items():
+        item_name = order_details["item_name"]
+        quantity = order_details["quantity"]
+        price = order_details["price"]
+        status = order_details["status"]
+        print(f"{order_id}: {item_name}, {quantity}, {price}, {status}")
+
+
+def menu(current_user):
+    initialize_data()
+    while True:
+        print("\nInventory Management System")
+        print("1. Add New Inventory Item")
+        print("2. Check Stock")
+        print("3. Adjust Stock")
+        print("4. Create Stock Purchase Order")
+        print("5. Modify Stock Purchase Order")
+        print("6. Cancel Stock Purchase Order")
+        print("7. Get Stock Purchase Order Status")
+        print("8. Generate Report")
+        print("9. Change Customer Order Status")
+        print("0. Exit")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            inventory = []
+            with open("INVENTORY_DATA.TXT", "r") as f:
+                lines = f.readlines()
+                section = None
+                for line in lines:
+                    line = line.strip()
+                    if line == "Inventory:":
+                        section = "inventory"
+                    elif line == "Purchase Orders:":
+                        section = "purchase_orders"
+                    elif line and section == "inventory":
+                        item, quantity, price = line.split(": ", )
+                        temp = [item,quantity,price]
+                        inventory.append(temp)
+            
+            print("Inventory Status".center(45))
+            print("=" * 45)
+            print(f"{'Item Name':<18}{'Quantity'.center(10)}{'Price':<17}")
+            print("=" * 45)
+            for item in inventory:
+                print(f"{item[0]:<18}{item[1].center(10)}{item[2]:<17}")
+            item_name = input("Enter item name: ")
+            while len(item_name.split(" "))!=1 or item_name == "":
+                print("Name must not be empty or include space.")
+                item_name = input("Re-enter item name: ")
+            quantity = int(input("Enter quantity: "))
+            price = int(input("Enter price: "))
+            add_or_update_inventory(item_name, quantity, price)
+            write_user_usage(
+                current_user["username"],
+                current_user["type"],
+                "add_or_update_inventory",
+            )
+
+        elif choice == "2":
+            inventory = []
+            with open("INVENTORY_DATA.TXT", "r") as f:
+                lines = f.readlines()
+                section = None
+                for line in lines:
+                    line = line.strip()
+                    if line == "Inventory:":
+                        section = "inventory"
+                    elif line == "Purchase Orders:":
+                        section = "purchase_orders"
+                    elif line and section == "inventory":
+                        item, quantity, price = line.split(": ", )
+                        temp = [item,quantity,price]
+                        inventory.append(temp)
+            
+            print("Inventory Status".center(45))
+            print("=" * 45)
+            print(f"{'Item Name':<18}{'Quantity'.center(10)}{'Price':<17}")
+            print("=" * 45)
+            for item in inventory:
+                print(f"{item[0]:<18}{item[1].center(10)}{item[2]:<17}")
+            item_name = input("Enter item name: ")
+            while len(item_name.split(" "))!=1 or item_name == "":
+                print("Name must not be empty or include space.")
+                item_name = input("Enter item name: ")
+            print(f"Stock for {item_name}: {check_stock(item_name)}")
+            write_user_usage(
+                current_user["username"], current_user["type"], "check_stock"
+            )
+
+        elif choice == "3":
+            inventory = []
+            with open("INVENTORY_DATA.TXT", "r") as f:
+                lines = f.readlines()
+                section = None
+                for line in lines:
+                    line = line.strip()
+                    if line == "Inventory:":
+                        section = "inventory"
+                    elif line == "Purchase Orders:":
+                        section = "purchase_orders"
+                    elif line and section == "inventory":
+                        item, quantity, price = line.split(": ")
+                        temp = [item,quantity,price]
+                        inventory.append(temp)
+            
+            print("Inventory Status".center(45))
+            print("=" * 45)
+            print(f"{'Item Name':<18}{'Quantity'.center(10)}{'Price':<17}")
+            print("=" * 45)
+            for item in inventory:
+                print(f"{item[0]:<18}{item[1].center(10)}{item[2]:<17}")
+            item_name = input("Enter item name: ")
+            while len(item_name.split(" "))!=1 or item_name == "":
+                print("Name must not be empty or include space.")
+                item_name = input("Enter item name: ")
+            quantity = int(input("Enter quantity adjustment (positive or negative): "))
+            adjust_stock(item_name, quantity)
+            write_user_usage(
+                current_user["username"], current_user["type"], "adjust_stock"
+            )
+
+        elif choice == "4":
+            inventory_order_status()
+            order_id = input("Enter new order ID: ")
+            while len(order_id.split(" "))!=1 or order_id == "":
+                print("Order ID must not be empty or include space.")
+                order_id = input("Re-enter order ID: ")
+            item_name = input("Enter item name: ")
+            while len(item_name.split(" "))!=1 or item_name == "":
+                print("Name must not be empty or include space.")
+                item_name = input("Re-enter item name: ")
+            quantity = int(input("Enter quantity: "))
+            quantity = int(quantity)
+            price = int(input("Enter price: "))
+            create_purchase_order(order_id, item_name, quantity, price)
+            write_user_usage(
+                current_user["username"], current_user["type"], "create_purchase_order"
+            )
+
+        elif choice == "5":
+            inventory_order_status()
+            order_id = input("Enter order ID: ")
+            new_item_name = input(
+                "Enter new item name (or leave blank to keep current): "
+            )
+            new_quantity = input(
+                "Enter new quantity (or leave blank to keep current): "
+            )
+            new_quantity = int(new_quantity) if new_quantity else None
+            modify_purchase_order(
+                order_id, new_item_name if new_item_name else None, new_quantity
+            )
+            write_user_usage(
+                current_user["username"], current_user["type"], "modify_purchase_order"
+            )
+
+        elif choice == "6":
+            inventory_order_status()
+            order_id = input("Enter order ID: ")
+            while len(order_id.split(" "))!=1 or order_id == "":
+                print("Order ID must not be empty or include space.")
+                order_id = input("Enter order ID: ")
+            cancel_purchase_order(order_id)
+            write_user_usage(
+                current_user["username"], current_user["type"], "cancel_purchase_order"
+            )
+
+        elif choice == "7":
+            inventory_order_status()
+            order_id = input("Enter order ID: ")
+            while len(order_id.split(" "))!=1 or order_id == "":
+                print("Order ID must not be empty or include space.")
+                order_id = input("Enter order ID: ")
+            print(f"Status for order ID {order_id}: {get_order_status(order_id)}")
+            write_user_usage(
+                current_user["username"], current_user["type"], "get_order_status"
+            )
+
+        elif choice == "8":
+            generate_report()
+            write_user_usage(
+                current_user["username"], current_user["type"], "inventory_report"
+            )
+        elif choice == "9":
+            write_user_usage(
+                current_user["username"],
+                current_user["type"],
+                "change_customer_order_status",
+            )
+            change_order_status_list = []
+            validation_list = []
+            with open("orders.txt", "r") as f:
+                data = f.readlines()
+                for order in data:
+                    order = eval(order)
+                    if order["send_status"] == "pending":
+                        validation_list.append(order)
+                        print(f"{order['order_id']}. {order['username']}")
+            order_id = input("Enter order ID: ")
+            while not (0 <= int(order_id) <= len(validation_list)):
+                print("Invalid order ID, please try again.")
+                order_id = input("Enter order ID: ")
+            print("====================================")
+            print("1. Set order to received")
+            print("2. Set order to cancelled")
+            print("3. Set order to pending")
+            status_choice = input("Enter your choice: ")
+            while status_choice not in ["1", "2", "3"]:
+                print("Invalid choice, please try again.")
+                status_choice = input("Enter your choice: ")
+            with open("orders.txt", "r+") as f:
+                data = f.readlines()
+                for record in data:
+                    change_order_status_list.append(eval(record))
+                for item in change_order_status_list:
+                    if item["order_id"] == int(order_id):
+                        if status_choice == "1":
+                            item["send_status"] = "received"
+                        elif status_choice == "2":
+                            item["send_status"] = "cancelled"
+                        elif status_choice == "3":
+                            item["send_status"] = "pending"
+            with open("orders.txt", "w") as f:
+                for item in change_order_status_list:
+                    f.write(str(item) + "\n")
+
+        elif choice == "0":
+            break
+        else:
+            print("Invalid choice, please try again.")
