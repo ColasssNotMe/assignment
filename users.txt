@@ -1,6 +1,0 @@
-{'id': '101', 'username': '101', 'password': '101', 'status': 'disable', 'type': 'superuser', 'name': 'Super User', 'address': 'address', 'phone': '010'}
-{'id': '010101129876', 'username': 'ming0101', 'password': '0101', 'status': 'approved', 'type': 'customer', 'name': 'Loh Ru Ming', 'address': 'Bukit', 'phone': '0123456789'}
-{'id': '010102121965', 'username': 'min0102', 'password': '0102', 'status': 'approved', 'type': 'admin', 'name': 'Loh Yu Min', 'address': 'Awan Besar', 'phone': '01234567890'}
-{'id': '010102101312', 'username': 'Wei0103', 'password': '0103', 'status': 'approved', 'type': 'staff', 'name': 'Yao Ming Yu', 'address': 'Bukit Binatang', 'phone': '01245685279'}
-{'id': '010104010101', 'username': 'Heng', 'password': '0104', 'status': 'pending', 'type': 'admin', 'name': 'YaoYu Heng', 'address': 'Bukit Huang', 'phone': '01234567890'}
-{'id': '010606191968', 'username': 'super', 'password': '0606', 'status': 'approved', 'type': 'superuser', 'name': 'superman A/L batman', 'address': 'Kuala Lumpur', 'phone': '01265425845'}
