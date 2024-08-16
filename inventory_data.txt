@@ -1,5 +1,11 @@
 Inventory:
-test: 10: 5
-test2: 2: 2
+Laptop_i3_4050: 24: 10000
+Laptop_i5_4050: 24: 15000
+Laptop_i7_4050: 16: 18000
+Laptop_i9_4090: 9: 20000
+Laptop: 3: 500
+Laptop_i3_1650: 5: 1500
 Purchase Orders:
-1: test2, 2, 4, in process
+0001: Laptop_i5_4050, 5, 10000, in process
+0002: Laptop_i7_4050, 15, 15000, in process
+0003: Laptop_i9_4050, 4, 20000, in process

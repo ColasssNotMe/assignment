@@ -1,10 +1,242 @@
-from order_pages import page1, page2, page3
-from inventory import load_data, add_or_update_inventory
+# EUGENE CHING YI WEI
+# TP077328
+
 import datetime as dt
-from User_Management import write_user_usage as log_user_activity
+from GAN_ZHI_MING_TP075848 import load_data, add_or_update_inventory
+from GAN_YEW_JUN_TP077400 import write_user_usage as log_user_activity
 # Do finish basic function before do change username/password function
 # TODO: need to make customer able to see what are currently on service
 # TODO: add order id
+
+
+def register_user(user_data_list, user_type: str):
+    new_username = input("Enter your username: ")
+    # check for usename null
+    while new_username == "":
+        print("Username cannot be empty!")
+        new_username = input("Enter your username: ")
+    with open("users.txt", "r") as f:
+        data = f.readlines()
+        for user in data:
+            user = eval(user)
+            while True:
+                if user["username"] == new_username:
+                    print("Username already exists!")
+                    new_username = input("Enter your username: ")
+                else:
+                    break
+    new_password = input("Enter your password: ")
+    reenter_password = input("Re-enter your password: ")
+    # check if the password are same or not
+    while new_password != reenter_password:
+        print("Passwords does not match!")
+        new_password = input("Enter your password: ")
+        reenter_password = input("Re-enter your password: ")
+    id_number = input("Enter your IC/passport number: ")
+    # check for null and only number
+    while True:
+        if id_number == "":
+            print("ID number cannot be empty!")
+            id_number = input("Enter your ID number: ")
+        elif id_number.isdigit() is False:
+            print("ID number must only contain number!")
+            id_number = input("Enter your ID number: ")
+        elif len(id_number) != 12:
+            print("ID number must be 12 digit!")
+            id_number = input("Enter your ID number: ")
+        else:
+            break
+    name = input("Enter your name: ")
+    while name == "":
+        print("Please enter your name!")
+        name = input("Enter your name: ")
+    phone = input("Enter your phone number: ")
+    while True:
+        if phone == "":
+            print("Phone number cannot be empty!")
+            phone = input("Enter your phone number: ")
+        elif phone.isdigit() is False:
+            print("Phone number must only contain number!")
+            phone = input("Enter your phone number: ")
+        elif len(phone) not in (10, 11):
+            print("Phone number must be 10 or 11 digit!")
+            phone = input("Enter your phone number: ")
+        else:
+            break
+    address = input("Enter your address: ")
+    while address == "":
+        print("Address cannot be empty!")
+        address = input("Enter your address: ")
+
+    # append the data to user_data_list
+    if user_type == "customer":
+        user_data_list.append(
+            {
+                "id": id_number,
+                "username": new_username,
+                "password": new_password,
+                "name": name,
+                "phone": phone,
+                "address": address,
+                "status": "pending",
+                "type": "customer",
+            }
+        )
+        print("=" * 50)
+        print(f"{"You have successfully registered":<50}")
+        print(f"{"Please wait for admin to approve":<50}")
+        print("=" * 50)
+
+    elif user_type == "stuff":
+        user_data_list.append(
+            {
+                "id": id_number,
+                "username": new_username,
+                "password": new_password,
+                "name": name,
+                "phone": phone,
+                "address": address,
+                "status": "pending",
+                "type": "stuff",
+            }
+        )
+        print("=" * 50)
+        print(f"{"You have successfully registered":<50}")
+        print(f"{"Please wait for admin to approve":<50}")
+        print("=" * 50)
+
+    elif user_type == "admin":
+        user_data_list.append(
+            {
+                "id": id_number,
+                "username": new_username,
+                "password": new_password,
+                "name": name,
+                "phone": phone,
+                "address": address,
+                "status": "pending",
+                "type": "admin",
+            }
+        )
+        print("=" * 50)
+        print(f"{"You have successfully registered":<50}")
+        print(f"{"Please wait for Super User to approve":<50}")
+        print("=" * 50)
+
+    # clear the file
+    with open("users.txt", "w") as f:
+        # dump data into text file
+        for record in user_data_list:
+            f.write(str(record) + "\n")
+
+
+# for delete,update, assign userdatalist to the function: user_data_list = delete_user(user_data_list, username)
+def update_user(
+    user_data_list, username, new_username, password, new_password, id: int, new_id: int
+):
+    for record in user_data_list:
+        if record["username"] == username:
+            if new_username:
+                record["username"] = new_username
+            if new_password:
+                record["password"] = new_password
+            if new_id:
+                record["id"] = new_id
+
+
+def delete_user(user_data_list, username):
+    for record in user_data_list:
+        if record["username"] == username:
+            user_data_list.remove(record)
+    return user_data_list
+
+
+def load_user_data():
+    with open("users.txt", "r+") as f:
+        data = f.readlines()
+        if len(data) > 0:
+            user_data_list = []
+            for record in data:
+                record = record.replace(",\n", "")
+                evaluated_record = eval(record)
+                user_data_list.append(evaluated_record)
+        else:
+            user_data_list = [
+                {
+                    "id": "101",
+                    "username": "101",
+                    "password": "101",
+                    "name": "Super User",
+                    "phone": "010",
+                    "address": "address",
+                    "status": "approved",
+                    "type": "superuser",
+                }
+            ]
+
+    return user_data_list
+
+
+def process_dictionary(inventory):
+    """convert dictionary from inventory to list
+
+    Args:
+        inventory (dict): inventory dictionary
+
+    Returns:
+        list: list of inventory
+    """
+    inventory_list = []
+    for key, value in inventory.items():
+        inventory_list.append([key, value])
+    return inventory_list
+
+
+def page1(inventory):
+    inventory_list = process_dictionary(inventory)
+    counter = 1
+    current_page_product = inventory_list[0:5]
+    # show only 5 product per page
+    # print only the product name
+    # if the thing too repetitive, can use function (elif part)
+    for product in inventory_list:
+        print(f"{counter}. {product[0]}")
+        counter += 1
+    print("p2. Page 2")
+    print("p3. Page 3")
+    print("c. Complete order")
+    print("b. Back to main menu")
+
+    return len(current_page_product), current_page_product
+
+
+def page2(inventory):
+    inventory_list = process_dictionary(inventory)
+    counter = 1
+    current_page_product = inventory_list[5:10]
+    for product in inventory_list[5:]:
+        print(f"{counter}. {product[0]}")
+        counter += 1
+
+    print("p1. Page 1")
+    print("p3. Page 3")
+    print("c. Complete order")
+    print("b. Back to main menu")
+    return len(current_page_product), current_page_product
+
+
+def page3(inventory):
+    inventory_list = process_dictionary(inventory)
+    counter = 1
+    current_page_product = inventory_list[10:15]
+    for product in inventory_list[10:]:
+        print(f"{counter}. {product[0]}")
+        counter += 1
+    print("p1. Page 1")
+    print("p2. Page 2")
+    print("c. Complete order")
+    print("b. Back to main menu")
+    return len(current_page_product), current_page_product
 
 
 def customer_menu(current_user):
@@ -13,27 +245,27 @@ def customer_menu(current_user):
     Args:
         current_user (list): info about current login user
     """
-    print("===================================")
-    print("               Menu                ")
-    print("===================================")
+    print("=" * 50)
+    print(f"{'Menu':^50}")
+    print("=" * 50)
     print("1. Order product")
     print("2. Service / Repair")
     print("3. Modify request")
     print("4. Order status")
     print("5. Reports")
     print("6. Exit")
-    selection = int(input("Enter your selection: "))
-    while selection not in [1, 2, 3, 4, 5]:
+    selection = input("Enter your selection: ")
+    while selection not in ["1", "2", "3", "4", "5", "6"]:
         print("Invalid selection!")
-        selection = int(input("Enter your selection: "))
-    if selection == 1:
-        order_product(current_page=1, current_user=current_user)
+        selection = input("Enter your selection: ")
+    if selection == "1":
+        order_products(current_page=1, current_user=current_user)
         log_user_activity(
             current_user["username"],
             "customer",
-            "order_product",
+            "order_products",
         )
-    elif selection == 2:
+    elif selection == "2":
         service_repair(username=current_user["username"], current_user=current_user)
         log_user_activity(
             current_user["username"],
@@ -41,7 +273,7 @@ def customer_menu(current_user):
             "service_repair",
         )
 
-    elif selection == 3:
+    elif selection == "3":
         modify_request(username=current_user["username"], current_user=current_user)
         log_user_activity(
             current_user["username"],
@@ -49,7 +281,7 @@ def customer_menu(current_user):
             "modify_request",
         )
 
-    elif selection == 4:
+    elif selection == "4":
         order_status(username=current_user["username"], current_user=current_user)
         log_user_activity(
             current_user["username"],
@@ -57,18 +289,24 @@ def customer_menu(current_user):
             "order_status",
         )
 
-    elif selection == 5:
+    elif selection == "5":
         reports(username=current_user["username"], current_user=current_user)
         log_user_activity(
             current_user["username"],
             "customer",
             "customer_reports",
         )
-    elif selection == 6:
+    elif selection == "6":
         exit()
 
 
-def order_product(current_page, current_user, current_order_list=None):
+def order_products(
+    current_page,
+    current_user,
+    current_order_list=None,
+    remove_order=None,
+    order_id=None,
+):
     """
     order product function
     Args:
@@ -107,10 +345,9 @@ def order_product(current_page, current_user, current_order_list=None):
         return customer_menu(current_user=current_user)
 
     while True:
-        print("===================================")
-        print("              Product              ")
-        print("===================================")
-
+        print("=" * 50)
+        print(f"{'Product':^50}")
+        print("=" * 50)
         # len_shown_product : to know how many product shown in the page
         # current_order_list : to store the product that user want to order
         if current_page == 1:
@@ -134,7 +371,7 @@ def order_product(current_page, current_user, current_order_list=None):
                 if current_page_product[int(selection) - 1][0] == itemname:
                     if number == 0:
                         print("Product out of stock!")
-                        return order_product(
+                        return order_products(
                             current_page=current_page, current_user=current_user
                         )
                     else:
@@ -145,7 +382,7 @@ def order_product(current_page, current_user, current_order_list=None):
                         )
 
         elif selection in ["p1", "p2", "p3"]:
-            order_product(current_page=int(selection[1]), current_user=current_user)
+            order_products(current_page=int(selection[1]), current_user=current_user)
         elif selection == "b":
             print("Back to menu")
             # revert back the total number of product ordered
@@ -158,12 +395,14 @@ def order_product(current_page, current_user, current_order_list=None):
             print("Order list: ")
 
             # show the order list
-            print("===================================")
-            print("              Order List           ")
-            print("===================================")
+            print("=" * 50)
+            print(f"{'':<5}{'Order List':^40}")
+            print("=" * 50)
             counter = 1
+            print(f"{'':<5}{'Item':<30}{'Price':<15}")
+            print("-" * 50)
             for product in current_order_list:
-                print(f"{counter}.{product[0]} - {product[1]}")
+                print(f"{counter:<5}{product[0]:<30} {product[1]:<15}")
                 counter += 1
                 simplified_current_order_list.append([product[0], product[1]])
             checkout = input("Confirm order? (y/n): ")
@@ -175,17 +414,29 @@ def order_product(current_page, current_user, current_order_list=None):
                     for item in simplified_current_order_list:
                         total += int(item[1])
 
-                    print("===================================")
-                    print("              Payment              ")
-                    print("===================================")
+                    print("=" * 50)
+                    print(f"{'Payment':^50}")
+                    print("=" * 50)
                     print("Total price: ", total)
                     print("1. Pay Now")
                     print("2. Pay Later")
                     print("3. Cancel")
                     payment = input("Enter your selection: ")
                     time_now = str(dt.datetime.now().replace(microsecond=0))
+                    # get the latest order id
+                    latest_order_id = 0
+                    with open("orders.txt", "r") as f:
+                        data = f.readlines()
+                        if len(data) == 0:
+                            latest_order_id = 1
+                        for item in data:
+                            item = eval(item)
+                            if item["order_id"] >= latest_order_id:
+                                latest_order_id = item["order_id"] + 1
                     if payment == "1":
-                        print("------------Payment successful!-----------")
+                        print("-" * 50)
+                        print(f"{'Payment Successfull':^50}")
+                        print("-" * 50)
                         # update the number of product in the inventory
                         for item in simplified_current_order_list:
                             if item[0] in high_stock_item_list:
@@ -194,14 +445,17 @@ def order_product(current_page, current_user, current_order_list=None):
                                 add_or_update_inventory(
                                     item_name=item[0], quantity=quantity, price=price
                                 )
-                        # get the latest order id
-                        latest_order_id = 0
-                        with open("orders.txt", "r") as f:
-                            data = f.readlines()
-                            for item in data:
-                                item = eval(item)
-                                if item["order_id"] > latest_order_id:
-                                    latest_order_id = item["order_id"] + 1
+                        # remove the order from the list if the user add product from modify func
+                        if remove_order:
+                            with open("orders.txt", "r") as f:
+                                lines = f.readlines()
+                            with open("orders.txt", "w") as f:
+                                for record in lines:
+                                    record = eval(record)
+                                    if order_id == record["order_id"]:
+                                        continue
+                                    f.write(str(record) + "\n")
+                                f.flush()
 
                         # write the order to the file
                         with open("orders.txt", "a") as f:
@@ -237,24 +491,43 @@ def order_product(current_page, current_user, current_order_list=None):
                                 )
                             )
                             print(
-                                "!!!Order successful!. Please pay as soon as possible in order to proceed!!!"
+                                f"{'!!!Order successful!. Please pay as soon as possible in order to proceed!!!':<50}"
                             )
                             f.write("\n")
+                        # remove the order from the list if the user add product from modify func
+
+                        if remove_order:
+                            print("Removing order")
+                            with open("orders.txt", "r") as f:
+                                lines = f.readlines()
+                            with open("orders.txt", "w") as f:
+                                for record in lines:
+                                    record = eval(record)
+                                    if order_id == record["order_id"]:
+                                        continue
+                                    f.write(str(record) + "\n")
+                                f.flush()
+
                         return customer_menu(current_user=current_user)
                     elif payment == "3":
-                        print("----------Order cancelled----------")
+                        print("-" * 50)
+                        print(f"{'Order Cancelled':^50}")
+                        print("-" * 50)
                         current_order_list = []
                         for item in current_order_list:
                             if item[0] in high_stock_item_list:
                                 high_stock_item_list[item[0]] += 1
-                        pass
+                        return customer_menu(current_user=current_user)
                 elif checkout == "n":
-                    print("----------Order cancelled----------")
+                    print("-" * 50)
+                    print(f"{'Order Cancelled':^50}")
+                    print("-" * 50)
                     for item in current_order_list:
                         if item[0] in high_stock_item_list:
                             high_stock_item_list[item[0]] += 1
+                    return customer_menu(current_user=current_user)
                 else:
-                    print("------------Invalid selection!------------")
+                    print(f"{'-':<10}{'Invalid selection':<30}{'-':<10}")
                     checkout = input("Confirm order? (y/n): ")
         else:
             print("Invalid selection!")
@@ -269,7 +542,7 @@ def service_repair(current_user, username):
             order = eval(order)
             if order["username"] == username:
                 c_order_list.append(order)
-    print("-----------------------------------")
+    print("-" * 50)
     print("Select order: ")
     if len(c_order_list) == 0:
         print("No order found!")
@@ -297,7 +570,7 @@ def service_repair(current_user, username):
     request_service_selection = ""
     item_list = []
     while request_service_selection != "c":
-        print("-----------------------------------")
+        print("-" * 50)
         print("Order details: ")
         # show all order item
         counter = 1
@@ -356,9 +629,9 @@ def modify_request(username, current_user):
             if order["username"] == username:
                 c_order_list.append(order)
 
-    print("-----------------------------------")
-    print("Select the order you want to modify")
-    print("-----------------------------------")
+    print("-" * 50)
+    print(f"{'Select the order you want to modify':^50}")
+    print("-" * 50)
     c_order_list_notpaid = []
     counter = 1
     for i in c_order_list:
@@ -386,7 +659,7 @@ def modify_request(username, current_user):
     if order_num_selection == "b":
         return customer_menu(current_user=current_user)
 
-    print("-----------------------------------")
+    print("-" * 50)
     print("Order details: ")
     c_order_to_deal_with = c_order_list_notpaid[int(order_num_selection) - 1]
     counter = 1
@@ -404,12 +677,14 @@ def modify_request(username, current_user):
         modify_selection = input("Enter your selection: ")
 
     if modify_selection == "a":
-        while True:
-            return order_product(
-                current_page=1,
-                current_user=current_user,
-                current_order_list=old_and_new_order_list_combined,
-            )
+        order_id = c_order_to_deal_with.get("order_id", "default_id")
+        return order_products(
+            current_page=1,
+            current_user=current_user,
+            current_order_list=old_and_new_order_list_combined,
+            remove_order=True,
+            order_id=order_id,
+        )
     elif modify_selection == "b":
         print("!!!!!!!!!Warning!!!!!!!!!")
         counter = 1
@@ -458,6 +733,7 @@ def modify_request(username, current_user):
                     ):
                         updated_data.append(
                             {
+                                "order_id": evaluated["order_id"],
                                 "username": username,
                                 "status": "notpaid",
                                 "time": str(dt.datetime.now().replace(microsecond=0)),
@@ -474,7 +750,6 @@ def modify_request(username, current_user):
             return customer_menu(current_user=current_user)
 
     elif modify_selection == "c":
-        # TODO: add in pseudocode
         with open("orders.txt", "r") as f:
             lines = f.readlines()
         with open("orders.txt", "w") as f:
@@ -508,14 +783,15 @@ def order_status(username, current_user):
             order = eval(order)
             if order["username"] == username:
                 c_order_list.append(order)
-    print("-----------------------------------")
+    print("-" * 50)
     print("Select the order you want to check: ")
     if len(c_order_list) == 0:
         print("No order found!")
         return customer_menu(current_user=current_user)
     else:
         for i in range(len(c_order_list)):
-            print(f"{i+1}.{c_order_list[i]['send_status']} - {c_order_list[i]['time']}")
+            send_status = c_order_list[i].get("send_status", "Status not available")
+            print(f"{i+1}. {send_status} - {c_order_list[i]['time']}")
         print("b. Back")
     selection = input("Enter the order number: ")
     while (
@@ -527,13 +803,13 @@ def order_status(username, current_user):
 
     if selection == "b":
         return customer_menu(current_user=current_user)
-        print("-----------------------------------")
+        print("-" * 50)
         print("Order details: ")
     else:
         selected_order = c_order_list[int(selection) - 1]
     total = 0
     # show all order item and price
-    print("-----------------------------------")
+    print("-" * 50)
     for i in range(len(selected_order["order"])):
         print(
             f"{i+1}.{selected_order['order'][i][0]} - {selected_order['order'][i][1]}"
@@ -591,9 +867,9 @@ def reports(username, current_user):
             order = eval(order)
             if order["username"] == username:
                 all_order.append(order)
-    print("-----------------------------------")
-    print("--------------Reports--------------")
-    print("-----------------------------------")
+    print("-" * 50)
+    print(f"{"Reports":<50}")
+    print("-" * 50)
     print("1. Order history")
     print("2. Service history")
     print("3. Back")
@@ -602,17 +878,16 @@ def reports(username, current_user):
         print("Invalid selection!")
         selection = input("Enter your selection: ")
     if selection == "1":
-        print("-----------------------------------")
+        print("-" * 50)
         print("Order history: ")
         counter = 1
         for order in all_order:
-            print(f"{'counter'}.{order['time']}")
+            print(f"{counter}.{order['time']}")
             counter += 1
         print("b. Back")
         selection = input("Enter your selection: ")
         while not (
-            selection.isdigit()
-            and 1 <= int(selection) <= len(all_order)
+            (selection.isdigit() and 1 <= int(selection) <= len(all_order))
             or selection == "b"
         ):
             print("Invalid selection!")
@@ -620,7 +895,7 @@ def reports(username, current_user):
         if selection == "b":
             return reports(username=username, current_user=current_user)
         else:
-            print("-----------------------------------")
+            print("-" * 50)
             print("Order details: ")
             counter = 1
             total = 0
@@ -638,7 +913,7 @@ def reports(username, current_user):
                 return reports(username=username, current_user=current_user)
     elif selection == "2":
         all_order = []
-        print("-----------------------------------")
+        print("-" * 50)
         print("Service history: ")
         with open("service_repair.txt", "r") as f:
             data = f.readlines()
@@ -657,7 +932,7 @@ def reports(username, current_user):
             if selection == "b":
                 return reports(username=username, current_user=current_user)
             else:
-                print("-----------------------------------")
+                print("-" * 50)
                 print("Service details: ")
                 counter = 1
                 with open("service_repair.txt", "r") as f:
